@@ -1,0 +1,59 @@
+{
+  "gridSizeMM": 60,
+  "products": [
+    {
+      "id": "starter-set",
+      "name": "Starter-Set (2x3)",
+      "price": 26.90,
+      "model": "starter-set_garage.glb",
+      "cellsX": 2,
+      "cellsZ": 3,
+      "enabled": true
+    },
+    {
+      "id": "eckprofil-links",
+      "name": "ModuDisplays - Eckprofil Garage links (2x3)",
+      "price": 17.90,
+      "model": "eckprofil_links.glb",
+      "cellsX": 2,
+      "cellsZ": 3,
+      "enabled": true
+    },
+    {
+      "id": "eckprofil-rechts",
+      "name": "ModuDisplays - Eckprofil Garage rechts (2x3)",
+      "price": 17.90,
+      "model": "eckprofil_rechts.glb",
+      "cellsX": 2,
+      "cellsZ": 3,
+      "enabled": true
+    },
+    {
+      "id": "ladepad",
+      "name": "ModuDisplays - Ladepad / Parkfläche (1x2)",
+      "price": 9.90,
+      "model": "ladepad_fliese.glb",
+      "cellsX": 1,
+      "cellsZ": 2,
+      "enabled": true
+    },
+    {
+      "id": "rueckwand",
+      "name": "ModuDisplays - Rückwand Garage (1x1)",
+      "price": 5.90,
+      "model": "rueckwand_garage.glb",
+      "cellsX": 1,
+      "cellsZ": 1,
+      "enabled": true
+    },
+    {
+      "id": "fliese",
+      "name": "ModuDisplays - Fließe (1x1)",
+      "price": 2.50,
+      "model": "fliese.glb",
+      "cellsX": 1,
+      "cellsZ": 1,
+      "enabled": true
+    }
+  ]
+}

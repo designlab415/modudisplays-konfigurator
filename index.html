@@ -1,0 +1,4062 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+
+  <title>ModuDisplays 3D-Konfigurator</title>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+
+      background: #f5f6f8;
+
+      font-family:
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+    }
+
+    /* =========================================================
+       VIEWPORT
+       ========================================================= */
+
+    #viewport {
+      position: relative;
+
+      flex: 1;
+      min-width: 0;
+      height: 100%;
+    }
+
+    #canvas3d {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      touch-action: none;
+    }
+
+    #help {
+      position: absolute;
+      top: 18px;
+      left: 18px;
+
+      padding: 10px 13px;
+
+      background: rgba(255, 255, 255, 0.92);
+
+      border: 1px solid rgba(0, 0, 0, 0.08);
+      border-radius: 8px;
+
+      color: #495057;
+
+      font-size: 12px;
+      line-height: 1.55;
+
+      pointer-events: none;
+
+      box-shadow:
+        0 3px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    #status {
+      position: absolute;
+      left: 18px;
+      bottom: 18px;
+
+      max-width: 600px;
+
+      padding: 9px 13px;
+
+      background: rgba(255, 255, 255, 0.96);
+
+      border: 1px solid #dee2e6;
+      border-radius: 7px;
+
+      color: #495057;
+
+      font-size: 12px;
+
+      opacity: 0;
+      pointer-events: none;
+
+      transition: opacity 0.2s;
+    }
+
+    #status.visible {
+      opacity: 1;
+    }
+
+    #status.warning {
+      color: #856404;
+      background: #fff3cd;
+      border-color: #ffeeba;
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+
+    #sidebar {
+      z-index: 10;
+
+      display: flex;
+      flex-direction: column;
+
+      width: 400px;
+      height: 100%;
+
+      background: #fff;
+
+      border-left: 1px solid #dee2e6;
+
+      box-shadow:
+        -3px 0 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .header {
+      padding: 20px;
+
+      border-bottom: 1px solid #eee;
+    }
+
+    .header h2 {
+      margin: 0 0 4px;
+
+      color: #111;
+
+      font-size: 21px;
+    }
+
+    .header p {
+      margin: 0;
+
+      color: #6c757d;
+
+      font-size: 13px;
+    }
+
+    .content {
+      flex: 1;
+
+      padding: 20px;
+
+      overflow-y: auto;
+    }
+
+    .section-title {
+      margin: 0 0 12px;
+
+      color: #888;
+
+      font-size: 11px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.7px;
+    }
+
+    /* =========================================================
+       BUTTONS
+       ========================================================= */
+
+    button {
+      font: inherit;
+    }
+
+    .action-controls {
+      display: flex;
+
+      gap: 9px;
+
+      margin-bottom: 24px;
+    }
+
+    .btn-action {
+      flex: 1;
+
+      padding: 10px;
+
+      border: 0;
+      border-radius: 6px;
+
+      background: #007bff;
+      color: white;
+
+      cursor: pointer;
+
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-action:hover {
+      background: #0056b3;
+    }
+
+    .btn-danger {
+      background: #dc3545;
+    }
+
+    .btn-danger:hover {
+      background: #bd2130;
+    }
+
+    /* =========================================================
+       PRODUCT CARDS
+       ========================================================= */
+
+    .item-card {
+      display: flex;
+      align-items: center;
+
+      gap: 12px;
+
+      margin-bottom: 10px;
+      padding: 12px;
+
+      background: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
+    }
+
+    .item-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .item-name {
+      display: block;
+
+      margin-bottom: 3px;
+
+      color: #212529;
+
+      font-size: 14px;
+      font-weight: 650;
+      line-height: 1.3;
+    }
+
+    .item-meta {
+      display: block;
+
+      color: #6c757d;
+
+      font-size: 11px;
+    }
+
+    .item-price {
+      display: block;
+
+      margin-top: 4px;
+
+      color: #e63946;
+
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .btn-add {
+      flex: 0 0 auto;
+
+      padding: 8px 10px;
+
+      border: 0;
+      border-radius: 5px;
+
+      background: #111;
+      color: #fff;
+
+      cursor: pointer;
+
+      white-space: nowrap;
+
+      font-size: 12px;
+      font-weight: 650;
+    }
+
+    .btn-add:hover {
+      background: #333;
+    }
+
+    /* =========================================================
+       BOM / FOOTER
+       ========================================================= */
+
+    .footer {
+      padding: 20px;
+
+      background: #fff;
+
+      border-top: 1px solid #eee;
+    }
+
+    .bom-list {
+      max-height: 160px;
+
+      margin-bottom: 15px;
+      padding: 10px;
+
+      overflow-y: auto;
+
+      background: #f8f9fa;
+
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+
+      font-size: 12px;
+    }
+
+    .bom-row {
+      display: flex;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin-bottom: 7px;
+    }
+
+    .bom-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .bom-name {
+      flex: 1;
+    }
+
+    .bom-price {
+      white-space: nowrap;
+
+      font-weight: 600;
+    }
+
+    .bom-empty {
+      color: #868e96;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      margin-bottom: 14px;
+
+      font-size: 18px;
+      font-weight: 750;
+    }
+
+    .btn-checkout {
+      width: 100%;
+
+      padding: 14px;
+
+      border: 0;
+      border-radius: 6px;
+
+      background: #28a745;
+      color: #fff;
+
+      cursor: pointer;
+
+      font-size: 15px;
+      font-weight: 650;
+    }
+
+    .btn-checkout:hover {
+      background: #218838;
+    }
+
+    .btn-reset {
+      width: 100%;
+
+      margin-top: 8px;
+      padding: 8px;
+
+      border: 1px solid #dc3545;
+      border-radius: 5px;
+
+      background: transparent;
+      color: #dc3545;
+
+      cursor: pointer;
+
+      font-size: 12px;
+    }
+
+    .btn-reset:hover {
+      background: #dc3545;
+      color: #fff;
+    }
+
+    @media (max-width: 850px) {
+      body {
+        flex-direction: column;
+      }
+
+      #viewport {
+        height: 55vh;
+      }
+
+      #sidebar {
+        width: 100%;
+        height: 45vh;
+
+        border-top: 1px solid #dee2e6;
+        border-left: 0;
+      }
+
+      #help {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =======================================================
+       VIEWPORT
+       ======================================================= -->
+
+  <div id="viewport">
+
+    <canvas id="canvas3d"></canvas>
+
+    <div id="help">
+      <strong>ModuDisplays 60-mm-Raster</strong><br>
+      Bauteil anklicken &amp; ziehen<br>
+      Leerer Bereich: Kamera drehen<br>
+      Mausrad: Zoomen<br>
+      R: 90° drehen<br>
+      Entf: Löschen
+    </div>
+
+    <div id="status"></div>
+
+  </div>
+
+
+  <!-- =======================================================
+       SIDEBAR
+       ======================================================= -->
+
+  <aside id="sidebar">
+
+    <div class="header">
+
+      <h2>
+        ModuDisplays 3D
+      </h2>
+
+      <p id="grid-description">
+        Konfigurator wird geladen …
+      </p>
+
+    </div>
+
+
+    <div class="content">
+
+      <div class="section-title">
+        Gewähltes Bauteil
+      </div>
+
+      <div class="action-controls">
+
+        <button
+          class="btn-action"
+          type="button"
+          onclick="rotateActivePart()"
+        >
+          ↻ 90° drehen
+        </button>
+
+        <button
+          class="btn-action btn-danger"
+          type="button"
+          onclick="deleteActivePart()"
+        >
+          Löschen
+        </button>
+
+      </div>
+
+
+      <div class="section-title">
+        Verfügbare Artikel
+      </div>
+
+      <div id="product-list">
+        Artikel werden geladen …
+      </div>
+
+    </div>
+
+
+    <div class="footer">
+
+      <div class="section-title">
+        Stückliste
+      </div>
+
+      <div
+        id="bom-summary"
+        class="bom-list"
+      ></div>
+
+      <div class="total-row">
+
+        <span>
+          Gesamtsumme
+        </span>
+
+        <span id="total-price">
+          0,00 €
+        </span>
+
+      </div>
+
+      <button
+        class="btn-checkout"
+        type="button"
+        onclick="copyBOM()"
+      >
+        Stückliste kopieren
+      </button>
+
+      <button
+        class="btn-reset"
+        type="button"
+        onclick="resetConfiguration()"
+      >
+        Konfiguration zurücksetzen
+      </button>
+
+    </div>
+
+  </aside>
+
+
+<script>
+
+/* ============================================================
+   1. KONFIGURATION / STATE
+   ============================================================ */
+
+let CELL_SIZE = 0.06;
+
+let products = [];
+let productMap = new Map();
+
+const occupancy = new Map();
+const placedObjects = [];
+const modelCache = new Map();
+
+let activeObject = null;
+
+let selectionHelper = null;
+let placementMarker = null;
+
+let isDragging = false;
+let draggingPointerId = null;
+
+let statusTimeout = null;
+
+
+/* ============================================================
+   2. DOM
+   ============================================================ */
+
+const canvas =
+  document.getElementById(
+    "canvas3d"
+  );
+
+const statusElement =
+  document.getElementById(
+    "status"
+  );
+
+
+/* ============================================================
+   3. THREE.JS
+   ============================================================ */
+
+const scene =
+  new THREE.Scene();
+
+scene.background =
+  new THREE.Color(
+    0xf4f6f8
+  );
+
+
+const camera =
+  new THREE.PerspectiveCamera(
+
+    45,
+
+    canvas.clientWidth /
+      canvas.clientHeight,
+
+    0.005,
+
+    1000
+
+  );
+
+camera.position.set(
+
+  0.55,
+
+  0.55,
+
+  0.65
+
+);
+
+
+const renderer =
+  new THREE.WebGLRenderer({
+
+    canvas,
+
+    antialias: true
+
+  });
+
+renderer.setPixelRatio(
+
+  Math.min(
+    window.devicePixelRatio,
+    2
+  )
+
+);
+
+renderer.setSize(
+
+  canvas.clientWidth,
+  canvas.clientHeight,
+  false
+
+);
+
+renderer.shadowMap.enabled =
+  true;
+
+renderer.shadowMap.type =
+  THREE.PCFSoftShadowMap;
+
+renderer.outputEncoding =
+  THREE.sRGBEncoding;
+
+
+/* ============================================================
+   4. CONTROLS
+   ============================================================ */
+
+const controls =
+  new THREE.OrbitControls(
+
+    camera,
+    canvas
+
+  );
+
+controls.enableDamping =
+  true;
+
+controls.dampingFactor =
+  0.08;
+
+controls.target.set(
+
+  0.12,
+  0.02,
+  0.12
+
+);
+
+controls.minDistance =
+  0.08;
+
+controls.maxDistance =
+  50;
+
+controls.maxPolarAngle =
+  Math.PI / 2.02;
+
+
+/* ============================================================
+   5. LICHT
+   ============================================================ */
+
+scene.add(
+
+  new THREE.HemisphereLight(
+
+    0xffffff,
+    0x77818a,
+    1.35
+
+  )
+
+);
+
+
+const sun =
+  new THREE.DirectionalLight(
+
+    0xffffff,
+    1.35
+
+  );
+
+sun.position.set(
+
+  -2,
+  5,
+  -2
+
+);
+
+sun.castShadow =
+  true;
+
+scene.add(
+  sun
+);
+
+
+/* ============================================================
+   6. UNENDLICHES 60-MM-RASTER
+   ============================================================ */
+
+const gridGeometry =
+  new THREE.PlaneGeometry(
+    200,
+    200
+  );
+
+gridGeometry.rotateX(
+  -Math.PI / 2
+);
+
+
+const gridMaterial =
+  new THREE.ShaderMaterial({
+
+    transparent: true,
+
+    depthWrite: false,
+
+    extensions: {
+      derivatives: true
+    },
+
+    uniforms: {
+
+      cellSize: {
+        value: CELL_SIZE
+      }
+
+    },
+
+    vertexShader: `
+
+      varying vec3 worldPos;
+
+      void main() {
+
+        vec4 world =
+          modelMatrix *
+          vec4(
+            position,
+            1.0
+          );
+
+        worldPos =
+          world.xyz;
+
+        gl_Position =
+          projectionMatrix *
+          viewMatrix *
+          world;
+
+      }
+
+    `,
+
+    fragmentShader: `
+
+      varying vec3 worldPos;
+
+      uniform float cellSize;
+
+
+      float gridLine(
+        float position,
+        float spacing
+      ) {
+
+        float coordinate =
+          position /
+          spacing;
+
+        float derivative =
+          fwidth(
+            coordinate
+          );
+
+        float distanceToLine =
+          abs(
+            fract(
+              coordinate -
+              0.5
+            ) -
+            0.5
+          ) /
+          derivative;
+
+        return
+          1.0 -
+          min(
+            distanceToLine,
+            1.0
+          );
+
+      }
+
+
+      void main() {
+
+        float minor =
+          max(
+
+            gridLine(
+              worldPos.x,
+              cellSize
+            ),
+
+            gridLine(
+              worldPos.z,
+              cellSize
+            )
+
+          );
+
+
+        float majorSpacing =
+          cellSize *
+          5.0;
+
+
+        float major =
+          max(
+
+            gridLine(
+              worldPos.x,
+              majorSpacing
+            ),
+
+            gridLine(
+              worldPos.z,
+              majorSpacing
+            )
+
+          );
+
+
+        vec3 minorColor =
+          vec3(
+            0.80,
+            0.83,
+            0.86
+          );
+
+
+        vec3 majorColor =
+          vec3(
+            0.56,
+            0.61,
+            0.66
+          );
+
+
+        vec3 color =
+          mix(
+            minorColor,
+            majorColor,
+            major
+          );
+
+
+        float alpha =
+          max(
+            minor * 0.45,
+            major * 0.75
+          );
+
+
+        gl_FragColor =
+          vec4(
+            color,
+            alpha
+          );
+
+      }
+
+    `
+
+  });
+
+
+const infiniteGrid =
+  new THREE.Mesh(
+
+    gridGeometry,
+    gridMaterial
+
+  );
+
+infiniteGrid.position.y =
+  -0.0005;
+
+scene.add(
+  infiniteGrid
+);
+
+
+/* ============================================================
+   7. URSPRUNGSMARKER
+   ============================================================ */
+
+const originMarker =
+  new THREE.Mesh(
+
+    new THREE.SphereGeometry(
+      0.004,
+      16,
+      16
+    ),
+
+    new THREE.MeshBasicMaterial({
+
+      color: 0xff6677
+
+    })
+
+  );
+
+originMarker.position.y =
+  0.004;
+
+scene.add(
+  originMarker
+);
+
+
+/* ============================================================
+   8. RAYCASTING / DRAG
+   ============================================================ */
+
+const raycaster =
+  new THREE.Raycaster();
+
+const pointer =
+  new THREE.Vector2();
+
+
+const dragPlane =
+  new THREE.Plane(
+
+    new THREE.Vector3(
+      0,
+      1,
+      0
+    ),
+
+    0
+
+  );
+
+
+const dragIntersection =
+  new THREE.Vector3();
+
+const dragOffset =
+  new THREE.Vector3();
+
+
+const originalGrid = {
+
+  x: 0,
+  z: 0
+
+};
+
+
+const loader =
+  new THREE.GLTFLoader();
+
+
+/* ============================================================
+   9. BOM.JSON LADEN
+   ============================================================ */
+
+async function loadBOM() {
+
+  try {
+
+    const response =
+      await fetch(
+        "./bom.json"
+      );
+
+
+    if (!response.ok) {
+
+      throw new Error(
+        "bom.json konnte nicht geladen werden."
+      );
+
+    }
+
+
+    const data =
+      await response.json();
+
+
+    CELL_SIZE =
+      (
+        data.gridSizeMM ||
+        60
+      ) /
+      1000;
+
+
+    products =
+      (
+        data.products ||
+        []
+      )
+      .filter(
+        product =>
+          product.enabled !== false
+      );
+
+
+    productMap =
+      new Map(
+
+        products.map(
+          product => [
+            product.id,
+            product
+          ]
+        )
+
+      );
+
+
+    gridMaterial
+      .uniforms
+      .cellSize
+      .value =
+        CELL_SIZE;
+
+
+    document
+      .getElementById(
+        "grid-description"
+      )
+      .textContent =
+
+        `Konfigurator · ${data.gridSizeMM || 60} × ${data.gridSizeMM || 60} mm Raster`;
+
+
+    renderProductList();
+
+    updateBOM();
+
+  }
+
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+
+      "bom.json konnte nicht geladen werden.\n\n" +
+
+      "Bitte den Konfigurator über einen lokalen Webserver " +
+
+      "wie VS Code Live Server öffnen."
+
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   10. PRODUKTLISTE AUS BOM
+   ============================================================ */
+
+function renderProductList() {
+
+  const container =
+    document.getElementById(
+      "product-list"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  for (
+    const product
+    of products
+  ) {
+
+    const card =
+      document.createElement(
+        "div"
+      );
+
+
+    card.className =
+      "item-card";
+
+
+    card.innerHTML = `
+
+      <div class="item-info">
+
+        <span class="item-name">
+          ${escapeHTML(product.name)}
+        </span>
+
+        <span class="item-meta">
+          ${product.cellsX} × ${product.cellsZ}
+          Rasterfelder
+        </span>
+
+        <span class="item-price">
+          ${formatPrice(product.price)}
+        </span>
+
+      </div>
+
+      <button
+        class="btn-add"
+        type="button"
+      >
+        + Hinzufügen
+      </button>
+
+    `;
+
+
+    card
+      .querySelector(
+        ".btn-add"
+      )
+      .addEventListener(
+
+        "click",
+
+        () =>
+          addPart(
+            product.id
+          )
+
+      );
+
+
+    container.appendChild(
+      card
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   11. GRID-HILFSFUNKTIONEN
+   ============================================================ */
+
+function gridToWorld(
+  value
+) {
+
+  return (
+    value *
+    CELL_SIZE
+  );
+
+}
+
+
+function worldToGrid(
+  value
+) {
+
+  return Math.round(
+
+    value /
+    CELL_SIZE
+
+  );
+
+}
+
+
+function cellKey(
+  x,
+  z
+) {
+
+  return `${x},${z}`;
+
+}
+
+
+/* ============================================================
+   12. ROTATION / FOOTPRINT
+   ============================================================ */
+
+function getRotationSteps(
+  object
+) {
+
+  return (
+    object.userData.rotationSteps ||
+    0
+  ) % 4;
+
+}
+
+
+function getFootprint(
+  object
+) {
+
+  const product =
+    productMap.get(
+      object.userData.productId
+    );
+
+
+  const steps =
+    getRotationSteps(
+      object
+    );
+
+
+  const quarterTurn =
+    steps === 1 ||
+    steps === 3;
+
+
+  return quarterTurn
+
+    ? {
+
+        cellsX:
+          product.cellsZ,
+
+        cellsZ:
+          product.cellsX
+
+      }
+
+    : {
+
+        cellsX:
+          product.cellsX,
+
+        cellsZ:
+          product.cellsZ
+
+      };
+
+}
+
+
+/* ============================================================
+   13. BELEGTE ZELLEN
+   ============================================================ */
+
+function getOccupiedCells(
+  object,
+  gridX,
+  gridZ
+) {
+
+  const footprint =
+    getFootprint(
+      object
+    );
+
+
+  const cells =
+    [];
+
+
+  for (
+    let x = 0;
+    x < footprint.cellsX;
+    x++
+  ) {
+
+    for (
+      let z = 0;
+      z < footprint.cellsZ;
+      z++
+    ) {
+
+      cells.push({
+
+        x:
+          gridX + x,
+
+        z:
+          gridZ + z
+
+      });
+
+    }
+
+  }
+
+
+  return cells;
+
+}
+
+
+function canPlaceObject(
+  object,
+  gridX,
+  gridZ
+) {
+
+  for (
+    const cell
+    of getOccupiedCells(
+      object,
+      gridX,
+      gridZ
+    )
+  ) {
+
+    const existing =
+      occupancy.get(
+
+        cellKey(
+          cell.x,
+          cell.z
+        )
+
+      );
+
+
+    if (
+      existing &&
+      existing !== object
+    ) {
+
+      return false;
+
+    }
+
+  }
+
+
+  return true;
+
+}
+
+
+function clearOccupancy(
+  object
+) {
+
+  const removeKeys =
+    [];
+
+
+  occupancy.forEach(
+
+    (
+      value,
+      key
+    ) => {
+
+      if (
+        value === object
+      ) {
+
+        removeKeys.push(
+          key
+        );
+
+      }
+
+    }
+
+  );
+
+
+  for (
+    const key
+    of removeKeys
+  ) {
+
+    occupancy.delete(
+      key
+    );
+
+  }
+
+}
+
+
+function occupyObject(
+  object,
+  gridX,
+  gridZ
+) {
+
+  clearOccupancy(
+    object
+  );
+
+
+  for (
+    const cell
+    of getOccupiedCells(
+      object,
+      gridX,
+      gridZ
+    )
+  ) {
+
+    occupancy.set(
+
+      cellKey(
+        cell.x,
+        cell.z
+      ),
+
+      object
+
+    );
+
+  }
+
+
+  object.userData.gridX =
+    gridX;
+
+
+  object.userData.gridZ =
+    gridZ;
+
+}
+
+
+/* ============================================================
+   14. FREIE POSITION SUCHEN
+   ============================================================ */
+
+function findFreePosition(
+  object
+) {
+
+  for (
+    let radius = 0;
+    radius < 500;
+    radius++
+  ) {
+
+    for (
+      let x = -radius;
+      x <= radius;
+      x++
+    ) {
+
+      for (
+        let z = -radius;
+        z <= radius;
+        z++
+      ) {
+
+        if (
+
+          Math.max(
+            Math.abs(x),
+            Math.abs(z)
+          )
+          !== radius
+
+        ) {
+
+          continue;
+
+        }
+
+
+        if (
+          canPlaceObject(
+            object,
+            x,
+            z
+          )
+        ) {
+
+          return {
+            x,
+            z
+          };
+
+        }
+
+      }
+
+    }
+
+  }
+
+
+  return {
+    x: 0,
+    z: 0
+  };
+
+}
+
+
+/* ============================================================
+   15. GLB LADEN
+   ============================================================ */
+
+function loadModel(
+  product
+) {
+
+  if (
+    modelCache.has(
+      product.id
+    )
+  ) {
+
+    return modelCache.get(
+      product.id
+    );
+
+  }
+
+
+  const promise =
+    new Promise(
+
+      (
+        resolve,
+        reject
+      ) => {
+
+        loader.load(
+
+          `./models/${product.model}`,
+
+          gltf =>
+            resolve(
+              gltf.scene
+            ),
+
+          undefined,
+
+          reject
+
+        );
+
+      }
+
+    );
+
+
+  modelCache.set(
+
+    product.id,
+    promise
+
+  );
+
+
+  return promise;
+
+}
+
+
+/* ============================================================
+   16. GLB VORBEREITEN
+   ============================================================ */
+
+function prepareModel(
+  model
+) {
+
+  model.traverse(
+
+    child => {
+
+      if (
+        !child.isMesh
+      ) {
+
+        return;
+
+      }
+
+
+      child.castShadow =
+        true;
+
+
+      child.receiveShadow =
+        true;
+
+
+      if (
+        Array.isArray(
+          child.material
+        )
+      ) {
+
+        child.material =
+          child.material.map(
+
+            material =>
+              material.clone()
+
+          );
+
+      }
+
+      else if (
+        child.material
+      ) {
+
+        child.material =
+          child.material.clone();
+
+      }
+
+    }
+
+  );
+
+
+  return model;
+
+}
+
+
+/* ============================================================
+   17. GLB AUTOMATISCH AUF VORNE LINKS NORMALISIEREN
+   ============================================================ */
+
+function normalizeModelOrigin(
+  object
+) {
+
+  const model =
+    object.userData.modelRoot;
+
+
+  /*
+    Ausgangspunkt zurücksetzen.
+  */
+
+  model.position.x =
+    0;
+
+  model.position.z =
+    0;
+
+
+  model.updateMatrixWorld(
+    true
+  );
+
+
+  /*
+    Tatsächliche Geometrie auslesen.
+
+    Dadurch spielt es keine Rolle mehr, ob:
+
+    - Ursprung vorne links liegt
+    - Ursprung mittig liegt
+    - Modell in +Z oder -Z aufgebaut wurde
+  */
+
+  const box =
+    new THREE.Box3()
+      .setFromObject(
+        model
+      );
+
+
+  /*
+    Linke/vordere Bounding-Box-Ecke
+    exakt nach 0 / 0 verschieben.
+  */
+
+  model.position.x =
+    -box.min.x;
+
+
+  model.position.z =
+    -box.min.z;
+
+
+  model.updateMatrixWorld(
+    true
+  );
+
+
+  /*
+    Maße nach der Normalisierung speichern.
+
+    Diese benötigen wir für eine geometrisch
+    korrekte Rotation.
+  */
+
+  const normalizedBox =
+    new THREE.Box3()
+      .setFromObject(
+        model
+      );
+
+
+  const size =
+    new THREE.Vector3();
+
+
+  normalizedBox.getSize(
+    size
+  );
+
+
+  object.userData.modelWidth =
+    size.x;
+
+
+  object.userData.modelDepth =
+    size.z;
+
+}
+
+
+/* ============================================================
+   18. ROTATION KORREKT UM VORNE LINKS
+   ============================================================ */
+
+function applyRotation(
+  object,
+  animate = true
+) {
+
+  const rotationRoot =
+    object.userData.rotationRoot;
+
+
+  const steps =
+    getRotationSteps(
+      object
+    );
+
+
+  const angle =
+    steps *
+    Math.PI /
+    2;
+
+
+  /*
+    Tatsächliche GLB-Abmessungen verwenden.
+
+    Dadurch bleibt auch bei leichten Maßabweichungen
+    die Geometrie sauber verankert.
+  */
+
+  const width =
+    object.userData.modelWidth;
+
+
+  const depth =
+    object.userData.modelDepth;
+
+
+  let offsetX =
+    0;
+
+
+  let offsetZ =
+    0;
+
+
+  /*
+    Three.js Y-Rotation:
+
+    0°
+    ┌───────┐
+    O       │
+    │       │
+    └───────┘
+
+    90°
+    Modell würde zunächst in -Z laufen.
+    Deshalb +width auf Z.
+
+    180°
+    +width X
+    +depth Z
+
+    270°
+    +depth X
+  */
+
+  if (
+    steps === 1
+  ) {
+
+    offsetZ =
+      width;
+
+  }
+
+  else if (
+    steps === 2
+  ) {
+
+    offsetX =
+      width;
+
+
+    offsetZ =
+      depth;
+
+  }
+
+  else if (
+    steps === 3
+  ) {
+
+    offsetX =
+      depth;
+
+  }
+
+
+  if (
+    !animate
+  ) {
+
+    rotationRoot.rotation.y =
+      angle;
+
+
+    rotationRoot.position.x =
+      offsetX;
+
+
+    rotationRoot.position.z =
+      offsetZ;
+
+
+    return;
+
+  }
+
+
+  gsap.to(
+
+    rotationRoot.rotation,
+
+    {
+
+      y:
+        angle,
+
+      duration:
+        0.25,
+
+      ease:
+        "power2.inOut",
+
+      onUpdate:
+        updateSelection
+
+    }
+
+  );
+
+
+  gsap.to(
+
+    rotationRoot.position,
+
+    {
+
+      x:
+        offsetX,
+
+      z:
+        offsetZ,
+
+      duration:
+        0.25,
+
+      ease:
+        "power2.inOut",
+
+      onUpdate:
+        updateSelection
+
+    }
+
+  );
+
+}
+
+
+/* ============================================================
+   19. MODELLMASS PRÜFEN
+   ============================================================ */
+
+function validateDimensions(
+  object
+) {
+
+  const product =
+    productMap.get(
+      object.userData.productId
+    );
+
+
+  const expectedX =
+    product.cellsX *
+    CELL_SIZE;
+
+
+  const expectedZ =
+    product.cellsZ *
+    CELL_SIZE;
+
+
+  const actualX =
+    object.userData.modelWidth;
+
+
+  const actualZ =
+    object.userData.modelDepth;
+
+
+  const normalDifference =
+    Math.abs(
+      actualX -
+      expectedX
+    )
+    +
+    Math.abs(
+      actualZ -
+      expectedZ
+    );
+
+
+  const swappedDifference =
+    Math.abs(
+      actualX -
+      expectedZ
+    )
+    +
+    Math.abs(
+      actualZ -
+      expectedX
+    );
+
+
+  const difference =
+    Math.min(
+      normalDifference,
+      swappedDifference
+    );
+
+
+  console.group(
+    `ModuDisplays: ${product.name}`
+  );
+
+
+  console.log(
+
+    "Raster-Soll:",
+
+    `${(
+      expectedX * 1000
+    ).toFixed(1)} × ${(
+      expectedZ * 1000
+    ).toFixed(1)} mm`
+
+  );
+
+
+  console.log(
+
+    "GLB:",
+
+    `${(
+      actualX * 1000
+    ).toFixed(1)} × ${(
+      actualZ * 1000
+    ).toFixed(1)} mm`
+
+  );
+
+
+  console.groupEnd();
+
+
+  if (
+    difference >
+    0.012
+  ) {
+
+    showStatus(
+
+      `Maßabweichung bei "${product.name}": ` +
+
+      `GLB ${(
+        actualX * 1000
+      ).toFixed(1)} × ${(
+        actualZ * 1000
+      ).toFixed(1)} mm`,
+
+      true,
+
+      7000
+
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   20. BAUTEIL HINZUFÜGEN
+   ============================================================ */
+
+async function addPart(
+  productId
+) {
+
+  const product =
+    productMap.get(
+      productId
+    );
+
+
+  if (!product) {
+    return;
+  }
+
+
+  showStatus(
+    `${product.name} wird geladen …`
+  );
+
+
+  try {
+
+    const template =
+      await loadModel(
+        product
+      );
+
+
+    const model =
+      prepareModel(
+
+        template.clone(
+          true
+        )
+
+      );
+
+
+    /*
+      Hierarchie:
+
+      wrapper
+        = Rasterposition
+
+      rotationRoot
+        = Rotation des Artikels
+
+      model
+        = normalisierte GLB-Geometrie
+    */
+
+    const wrapper =
+      new THREE.Group();
+
+
+    const rotationRoot =
+      new THREE.Group();
+
+
+    rotationRoot.add(
+      model
+    );
+
+
+    wrapper.add(
+      rotationRoot
+    );
+
+
+    wrapper.userData = {
+
+      isSelectable: true,
+
+      productId:
+        product.id,
+
+      gridX: 0,
+      gridZ: 0,
+
+      rotationSteps: 0,
+
+      rotationRoot,
+      modelRoot: model,
+
+      modelWidth: 0,
+      modelDepth: 0
+
+    };
+
+
+    /*
+      Zuerst Modellursprung normalisieren.
+    */
+
+    normalizeModelOrigin(
+      wrapper
+    );
+
+
+    /*
+      Rotation 0° anwenden.
+    */
+
+    applyRotation(
+      wrapper,
+      false
+    );
+
+
+    scene.add(
+      wrapper
+    );
+
+
+    /*
+      Freien Rasterplatz finden.
+    */
+
+    const free =
+      findFreePosition(
+        wrapper
+      );
+
+
+    wrapper.position.set(
+
+      gridToWorld(
+        free.x
+      ),
+
+      0.025,
+
+      gridToWorld(
+        free.z
+      )
+
+    );
+
+
+    occupyObject(
+
+      wrapper,
+
+      free.x,
+
+      free.z
+
+    );
+
+
+    placedObjects.push(
+      wrapper
+    );
+
+
+    validateDimensions(
+      wrapper
+    );
+
+
+    setActiveObject(
+      wrapper
+    );
+
+
+    updateBOM();
+
+
+    gsap.to(
+
+      wrapper.position,
+
+      {
+
+        y: 0,
+
+        duration: 0.28,
+
+        ease: "back.out(1.4)",
+
+        onUpdate:
+          updateSelection
+
+      }
+
+    );
+
+
+    showStatus(
+      `${product.name} hinzugefügt`
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    alert(
+
+      "Modell konnte nicht geladen werden:\n\n" +
+
+      `models/${product.model}`
+
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   21. AUSWAHL
+   ============================================================ */
+
+function removeSelection() {
+
+  if (
+    !selectionHelper
+  ) {
+
+    return;
+
+  }
+
+
+  scene.remove(
+    selectionHelper
+  );
+
+
+  selectionHelper.geometry.dispose();
+
+  selectionHelper.material.dispose();
+
+
+  selectionHelper =
+    null;
+
+}
+
+
+function setActiveObject(
+  object
+) {
+
+  removeSelection();
+
+
+  activeObject =
+    object ||
+    null;
+
+
+  if (
+    !activeObject
+  ) {
+
+    return;
+
+  }
+
+
+  selectionHelper =
+    new THREE.BoxHelper(
+
+      activeObject,
+
+      0x00cfe8
+
+    );
+
+
+  selectionHelper.material.depthTest =
+    false;
+
+
+  selectionHelper.material.transparent =
+    true;
+
+
+  selectionHelper.material.opacity =
+    0.95;
+
+
+  selectionHelper.renderOrder =
+    999;
+
+
+  scene.add(
+    selectionHelper
+  );
+
+}
+
+
+function updateSelection() {
+
+  if (
+    selectionHelper
+  ) {
+
+    selectionHelper.update();
+
+  }
+
+}
+
+
+/* ============================================================
+   22. VERSCHACHTELTE GLB-MESHES
+   ============================================================ */
+
+function findSelectableRoot(
+  object
+) {
+
+  let current =
+    object;
+
+
+  while (
+    current
+  ) {
+
+    if (
+      current.userData &&
+      current.userData.isSelectable
+    ) {
+
+      return current;
+
+    }
+
+
+    current =
+      current.parent;
+
+  }
+
+
+  return null;
+
+}
+
+
+/* ============================================================
+   23. POINTER
+   ============================================================ */
+
+function updatePointer(
+  event
+) {
+
+  const rect =
+    canvas.getBoundingClientRect();
+
+
+  pointer.x =
+
+    (
+      (
+        event.clientX -
+        rect.left
+      )
+      /
+      rect.width
+    )
+    *
+    2
+    -
+    1;
+
+
+  pointer.y =
+
+    -(
+      (
+        event.clientY -
+        rect.top
+      )
+      /
+      rect.height
+    )
+    *
+    2
+    +
+    1;
+
+}
+
+
+function getObjectAtPointer() {
+
+  raycaster.setFromCamera(
+
+    pointer,
+
+    camera
+
+  );
+
+
+  const hits =
+    raycaster.intersectObjects(
+
+      placedObjects,
+
+      true
+
+    );
+
+
+  for (
+    const hit
+    of hits
+  ) {
+
+    const root =
+      findSelectableRoot(
+        hit.object
+      );
+
+
+    if (
+      root
+    ) {
+
+      return root;
+
+    }
+
+  }
+
+
+  return null;
+
+}
+
+
+/* ============================================================
+   24. PLATZIERUNGSMARKER
+   ============================================================ */
+
+function removePlacementMarker() {
+
+  if (
+    !placementMarker
+  ) {
+
+    return;
+
+  }
+
+
+  scene.remove(
+    placementMarker
+  );
+
+
+  placementMarker.geometry.dispose();
+
+  placementMarker.material.dispose();
+
+
+  placementMarker =
+    null;
+
+}
+
+
+function showPlacementMarker(
+  object,
+  gridX,
+  gridZ,
+  valid
+) {
+
+  removePlacementMarker();
+
+
+  const footprint =
+    getFootprint(
+      object
+    );
+
+
+  /*
+    Exakt auf Rastermaß.
+
+    1×1 = 60 × 60 mm
+    1×2 = 60 × 120 mm
+    2×3 = 120 × 180 mm
+  */
+
+  const width =
+    footprint.cellsX *
+    CELL_SIZE;
+
+
+  const depth =
+    footprint.cellsZ *
+    CELL_SIZE;
+
+
+  const geometry =
+    new THREE.PlaneGeometry(
+
+      width,
+      depth
+
+    );
+
+
+  geometry.rotateX(
+    -Math.PI / 2
+  );
+
+
+  const material =
+    new THREE.MeshBasicMaterial({
+
+      color:
+        valid
+          ? 0x00cfe8
+          : 0xdc3545,
+
+      transparent:
+        true,
+
+      opacity:
+        0.20,
+
+      depthWrite:
+        false,
+
+      side:
+        THREE.DoubleSide
+
+    });
+
+
+  placementMarker =
+    new THREE.Mesh(
+
+      geometry,
+      material
+
+    );
+
+
+  /*
+    Wrapper sitzt vorne links.
+
+    PlaneGeometry besitzt seinen Ursprung dagegen
+    in der Mitte.
+
+    Daher halbe Breite/Tiefe addieren.
+  */
+
+  placementMarker.position.set(
+
+    gridToWorld(
+      gridX
+    )
+    +
+    width / 2,
+
+    0.001,
+
+    gridToWorld(
+      gridZ
+    )
+    +
+    depth / 2
+
+  );
+
+
+  scene.add(
+    placementMarker
+  );
+
+}
+
+
+/* ============================================================
+   25. DRAG START
+   ============================================================ */
+
+canvas.addEventListener(
+
+  "pointerdown",
+
+  event => {
+
+    if (
+      event.pointerType === "mouse" &&
+      event.button !== 0
+    ) {
+
+      return;
+
+    }
+
+
+    updatePointer(
+      event
+    );
+
+
+    const target =
+      getObjectAtPointer();
+
+
+    /*
+      Leerer Bereich:
+      OrbitControls normal verwenden.
+    */
+
+    if (
+      !target
+    ) {
+
+      setActiveObject(
+        null
+      );
+
+
+      controls.enabled =
+        true;
+
+
+      return;
+
+    }
+
+
+    /*
+      Objekt getroffen.
+    */
+
+    setActiveObject(
+      target
+    );
+
+
+    controls.enabled =
+      false;
+
+
+    isDragging =
+      true;
+
+
+    draggingPointerId =
+      event.pointerId;
+
+
+    originalGrid.x =
+      target.userData.gridX;
+
+
+    originalGrid.z =
+      target.userData.gridZ;
+
+
+    raycaster.setFromCamera(
+
+      pointer,
+      camera
+
+    );
+
+
+    if (
+      raycaster.ray.intersectPlane(
+
+        dragPlane,
+        dragIntersection
+
+      )
+    ) {
+
+      /*
+        Klickposition relativ zum Rasteranker merken.
+      */
+
+      dragOffset.set(
+
+        target.position.x -
+          dragIntersection.x,
+
+        0,
+
+        target.position.z -
+          dragIntersection.z
+
+      );
+
+    }
+
+    else {
+
+      dragOffset.set(
+        0,
+        0,
+        0
+      );
+
+    }
+
+
+    try {
+
+      canvas.setPointerCapture(
+        event.pointerId
+      );
+
+    }
+
+    catch (error) {}
+
+
+    canvas.style.cursor =
+      "grabbing";
+
+
+    event.preventDefault();
+
+  },
+
+  /*
+    Vor OrbitControls abfangen.
+  */
+
+  true
+
+);
+
+
+/* ============================================================
+   26. DRAG MOVE
+   ============================================================ */
+
+canvas.addEventListener(
+
+  "pointermove",
+
+  event => {
+
+    updatePointer(
+      event
+    );
+
+
+    /*
+      Nur Hover.
+    */
+
+    if (
+      !isDragging ||
+      !activeObject
+    ) {
+
+      canvas.style.cursor =
+
+        getObjectAtPointer()
+
+          ? "pointer"
+
+          : "default";
+
+
+      return;
+
+    }
+
+
+    if (
+      event.pointerId !==
+      draggingPointerId
+    ) {
+
+      return;
+
+    }
+
+
+    raycaster.setFromCamera(
+
+      pointer,
+      camera
+
+    );
+
+
+    if (
+      !raycaster.ray.intersectPlane(
+
+        dragPlane,
+        dragIntersection
+
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    const rawX =
+
+      dragIntersection.x +
+      dragOffset.x;
+
+
+    const rawZ =
+
+      dragIntersection.z +
+      dragOffset.z;
+
+
+    /*
+      Direkt während des Ziehens auf
+      60-mm-Raster einrasten.
+    */
+
+    const gridX =
+      worldToGrid(
+        rawX
+      );
+
+
+    const gridZ =
+      worldToGrid(
+        rawZ
+      );
+
+
+    const snappedX =
+      gridToWorld(
+        gridX
+      );
+
+
+    const snappedZ =
+      gridToWorld(
+        gridZ
+      );
+
+
+    const valid =
+      canPlaceObject(
+
+        activeObject,
+
+        gridX,
+
+        gridZ
+
+      );
+
+
+    /*
+      Modell sitzt jetzt bereits exakt
+      auf derselben Rasterkoordinate wie
+      der Platzierungsmarker.
+    */
+
+    activeObject.position.set(
+
+      snappedX,
+
+      0.008,
+
+      snappedZ
+
+    );
+
+
+    showPlacementMarker(
+
+      activeObject,
+
+      gridX,
+
+      gridZ,
+
+      valid
+
+    );
+
+
+    updateSelection();
+
+
+    canvas.style.cursor =
+      "grabbing";
+
+
+    event.preventDefault();
+
+  }
+
+);
+
+
+/* ============================================================
+   27. DRAG ENDE
+   ============================================================ */
+
+function finishDrag(
+  event
+) {
+
+  controls.enabled =
+    true;
+
+
+  if (
+    !isDragging ||
+    !activeObject
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    event.pointerId !==
+    draggingPointerId
+  ) {
+
+    return;
+
+  }
+
+
+  isDragging =
+    false;
+
+
+  draggingPointerId =
+    null;
+
+
+  removePlacementMarker();
+
+
+  const gridX =
+    worldToGrid(
+      activeObject.position.x
+    );
+
+
+  const gridZ =
+    worldToGrid(
+      activeObject.position.z
+    );
+
+
+  const valid =
+    canPlaceObject(
+
+      activeObject,
+
+      gridX,
+
+      gridZ
+
+    );
+
+
+  if (
+    valid
+  ) {
+
+    occupyObject(
+
+      activeObject,
+
+      gridX,
+
+      gridZ
+
+    );
+
+
+    gsap.to(
+
+      activeObject.position,
+
+      {
+
+        x:
+          gridToWorld(
+            gridX
+          ),
+
+        y: 0,
+
+        z:
+          gridToWorld(
+            gridZ
+          ),
+
+        duration:
+          0.10,
+
+        ease:
+          "power1.out",
+
+        onUpdate:
+          updateSelection
+
+      }
+
+    );
+
+  }
+
+  else {
+
+    /*
+      Belegt:
+      zurück zur alten Rasterposition.
+    */
+
+    gsap.to(
+
+      activeObject.position,
+
+      {
+
+        x:
+          gridToWorld(
+            originalGrid.x
+          ),
+
+        y: 0,
+
+        z:
+          gridToWorld(
+            originalGrid.z
+          ),
+
+        duration:
+          0.18,
+
+        ease:
+          "power1.out",
+
+        onUpdate:
+          updateSelection
+
+      }
+
+    );
+
+
+    showStatus(
+
+      "Diese Rasterposition ist bereits belegt.",
+
+      true
+
+    );
+
+  }
+
+
+  try {
+
+    canvas.releasePointerCapture(
+      event.pointerId
+    );
+
+  }
+
+  catch (error) {}
+
+}
+
+
+canvas.addEventListener(
+  "pointerup",
+  finishDrag
+);
+
+
+canvas.addEventListener(
+  "pointercancel",
+  finishDrag
+);
+
+
+/* ============================================================
+   28. 90° DREHEN
+   ============================================================ */
+
+function rotateActivePart() {
+
+  if (
+    !activeObject
+  ) {
+
+    showStatus(
+
+      "Bitte zuerst ein Bauteil auswählen.",
+
+      true
+
+    );
+
+
+    return;
+
+  }
+
+
+  const oldRotation =
+    getRotationSteps(
+      activeObject
+    );
+
+
+  const newRotation =
+    (
+      oldRotation +
+      1
+    )
+    %
+    4;
+
+
+  /*
+    Erst logisch testen.
+  */
+
+  activeObject.userData.rotationSteps =
+    newRotation;
+
+
+  const gridX =
+    activeObject.userData.gridX;
+
+
+  const gridZ =
+    activeObject.userData.gridZ;
+
+
+  if (
+    !canPlaceObject(
+
+      activeObject,
+
+      gridX,
+
+      gridZ
+
+    )
+  ) {
+
+    activeObject.userData.rotationSteps =
+      oldRotation;
+
+
+    showStatus(
+
+      "Für die Drehung ist nicht genügend Platz.",
+
+      true
+
+    );
+
+
+    return;
+
+  }
+
+
+  /*
+    Neue Zellenbelegung übernehmen.
+  */
+
+  occupyObject(
+
+    activeObject,
+
+    gridX,
+
+    gridZ
+
+  );
+
+
+  applyRotation(
+
+    activeObject,
+
+    true
+
+  );
+
+}
+
+
+/* ============================================================
+   29. LÖSCHEN
+   ============================================================ */
+
+function deleteActivePart() {
+
+  if (
+    !activeObject
+  ) {
+
+    showStatus(
+
+      "Bitte zuerst ein Bauteil auswählen.",
+
+      true
+
+    );
+
+
+    return;
+
+  }
+
+
+  const object =
+    activeObject;
+
+
+  clearOccupancy(
+    object
+  );
+
+
+  const index =
+    placedObjects.indexOf(
+      object
+    );
+
+
+  if (
+    index !== -1
+  ) {
+
+    placedObjects.splice(
+
+      index,
+      1
+
+    );
+
+  }
+
+
+  setActiveObject(
+    null
+  );
+
+
+  scene.remove(
+    object
+  );
+
+
+  updateBOM();
+
+
+  showStatus(
+    "Bauteil entfernt."
+  );
+
+}
+
+
+/* ============================================================
+   30. BOM
+   ============================================================ */
+
+function getBOMCounts() {
+
+  const counts =
+    new Map();
+
+
+  for (
+    const object
+    of placedObjects
+  ) {
+
+    const id =
+      object.userData.productId;
+
+
+    counts.set(
+
+      id,
+
+      (
+        counts.get(id) ||
+        0
+      )
+      +
+      1
+
+    );
+
+  }
+
+
+  return counts;
+
+}
+
+
+function updateBOM() {
+
+  const container =
+    document.getElementById(
+      "bom-summary"
+    );
+
+
+  const totalElement =
+    document.getElementById(
+      "total-price"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  const counts =
+    getBOMCounts();
+
+
+  let total =
+    0;
+
+
+  if (
+    counts.size === 0
+  ) {
+
+    container.innerHTML = `
+
+      <div class="bom-empty">
+        Noch keine Komponenten platziert.
+      </div>
+
+    `;
+
+  }
+
+
+  for (
+    const product
+    of products
+  ) {
+
+    const quantity =
+      counts.get(
+        product.id
+      ) ||
+      0;
+
+
+    if (
+      quantity === 0
+    ) {
+
+      continue;
+
+    }
+
+
+    const subtotal =
+
+      quantity *
+      product.price;
+
+
+    total +=
+      subtotal;
+
+
+    const row =
+      document.createElement(
+        "div"
+      );
+
+
+    row.className =
+      "bom-row";
+
+
+    row.innerHTML = `
+
+      <span class="bom-name">
+        ${quantity}×
+        ${escapeHTML(product.name)}
+      </span>
+
+      <span class="bom-price">
+        ${formatPrice(subtotal)}
+      </span>
+
+    `;
+
+
+    container.appendChild(
+      row
+    );
+
+  }
+
+
+  totalElement.textContent =
+    formatPrice(
+      total
+    );
+
+}
+
+
+/* ============================================================
+   31. BOM KOPIEREN
+   ============================================================ */
+
+async function copyBOM() {
+
+  if (
+    placedObjects.length === 0
+  ) {
+
+    showStatus(
+
+      "Die Stückliste ist noch leer.",
+
+      true
+
+    );
+
+
+    return;
+
+  }
+
+
+  const counts =
+    getBOMCounts();
+
+
+  let total =
+    0;
+
+
+  let text =
+
+    "ModuDisplays Konfiguration\n" +
+
+    "==========================\n\n";
+
+
+  for (
+    const product
+    of products
+  ) {
+
+    const quantity =
+      counts.get(
+        product.id
+      ) ||
+      0;
+
+
+    if (
+      quantity === 0
+    ) {
+
+      continue;
+
+    }
+
+
+    const subtotal =
+
+      product.price *
+      quantity;
+
+
+    total +=
+      subtotal;
+
+
+    text +=
+
+      `${quantity}x ${product.name}\n` +
+
+      `${formatPrice(subtotal)}\n\n`;
+
+  }
+
+
+  text +=
+
+    "--------------------------\n" +
+
+    `Gesamtsumme: ${formatPrice(total)}`;
+
+
+  try {
+
+    await navigator.clipboard.writeText(
+      text
+    );
+
+
+    showStatus(
+      "Stückliste kopiert."
+    );
+
+  }
+
+  catch (error) {
+
+    console.error(
+      error
+    );
+
+
+    /*
+      Fallback.
+    */
+
+    const textarea =
+      document.createElement(
+        "textarea"
+      );
+
+
+    textarea.value =
+      text;
+
+
+    textarea.style.position =
+      "fixed";
+
+
+    textarea.style.opacity =
+      "0";
+
+
+    document.body.appendChild(
+      textarea
+    );
+
+
+    textarea.select();
+
+
+    document.execCommand(
+      "copy"
+    );
+
+
+    textarea.remove();
+
+
+    showStatus(
+      "Stückliste kopiert."
+    );
+
+  }
+
+}
+
+
+/* ============================================================
+   32. RESET
+   ============================================================ */
+
+function resetConfiguration() {
+
+  if (
+    placedObjects.length === 0
+  ) {
+
+    return;
+
+  }
+
+
+  if (
+    !confirm(
+      "Komplette Konfiguration zurücksetzen?"
+    )
+  ) {
+
+    return;
+
+  }
+
+
+  setActiveObject(
+    null
+  );
+
+
+  removePlacementMarker();
+
+
+  for (
+    const object
+    of placedObjects
+  ) {
+
+    scene.remove(
+      object
+    );
+
+  }
+
+
+  placedObjects.length =
+    0;
+
+
+  occupancy.clear();
+
+
+  isDragging =
+    false;
+
+
+  draggingPointerId =
+    null;
+
+
+  controls.enabled =
+    true;
+
+
+  updateBOM();
+
+
+  showStatus(
+    "Konfiguration zurückgesetzt."
+  );
+
+}
+
+
+/* ============================================================
+   33. PREIS
+   ============================================================ */
+
+function formatPrice(
+  value
+) {
+
+  return new Intl.NumberFormat(
+
+    "de-DE",
+
+    {
+
+      style: "currency",
+      currency: "EUR"
+
+    }
+
+  ).format(
+    value
+  );
+
+}
+
+
+/* ============================================================
+   34. HTML SICHER AUSGEBEN
+   ============================================================ */
+
+function escapeHTML(
+  value
+) {
+
+  return String(value)
+
+    .replaceAll(
+      "&",
+      "&amp;"
+    )
+
+    .replaceAll(
+      "<",
+      "&lt;"
+    )
+
+    .replaceAll(
+      ">",
+      "&gt;"
+    )
+
+    .replaceAll(
+      "\"",
+      "&quot;"
+    )
+
+    .replaceAll(
+      "'",
+      "&#039;"
+    );
+
+}
+
+
+/* ============================================================
+   35. STATUS
+   ============================================================ */
+
+function showStatus(
+  message,
+  warning = false,
+  duration = 2200
+) {
+
+  clearTimeout(
+    statusTimeout
+  );
+
+
+  statusElement.textContent =
+    message;
+
+
+  statusElement.classList.toggle(
+
+    "warning",
+
+    warning
+
+  );
+
+
+  statusElement.classList.add(
+    "visible"
+  );
+
+
+  statusTimeout =
+    setTimeout(
+
+      () => {
+
+        statusElement
+          .classList
+          .remove(
+            "visible"
+          );
+
+      },
+
+      duration
+
+    );
+
+}
+
+
+/* ============================================================
+   36. KEYBOARD
+   ============================================================ */
+
+window.addEventListener(
+
+  "keydown",
+
+  event => {
+
+    if (
+      event.key === "Escape"
+    ) {
+
+      setActiveObject(
+        null
+      );
+
+    }
+
+
+    if (
+      (
+        event.key === "Delete" ||
+        event.key === "Backspace"
+      )
+      &&
+      activeObject
+    ) {
+
+      event.preventDefault();
+
+
+      deleteActivePart();
+
+    }
+
+
+    if (
+      event.key.toLowerCase() === "r"
+      &&
+      activeObject
+    ) {
+
+      rotateActivePart();
+
+    }
+
+  }
+
+);
+
+
+/* ============================================================
+   37. RESIZE
+   ============================================================ */
+
+function resize() {
+
+  const width =
+    canvas.clientWidth;
+
+
+  const height =
+    canvas.clientHeight;
+
+
+  if (
+    width === 0 ||
+    height === 0
+  ) {
+
+    return;
+
+  }
+
+
+  camera.aspect =
+    width /
+    height;
+
+
+  camera.updateProjectionMatrix();
+
+
+  renderer.setSize(
+
+    width,
+    height,
+    false
+
+  );
+
+}
+
+
+window.addEventListener(
+  "resize",
+  resize
+);
+
+
+/* ============================================================
+   38. RENDER LOOP
+   ============================================================ */
+
+function animate() {
+
+  requestAnimationFrame(
+    animate
+  );
+
+
+  controls.update();
+
+
+  /*
+    Sichtbare Rasterebene folgt der Kamera
+    ausschließlich in ganzen Rastereinheiten.
+
+    Dadurch bleibt das Raster mathematisch
+    weltweit auf denselben 60-mm-Koordinaten.
+  */
+
+  infiniteGrid.position.x =
+
+    Math.round(
+      camera.position.x /
+      CELL_SIZE
+    )
+    *
+    CELL_SIZE;
+
+
+  infiniteGrid.position.z =
+
+    Math.round(
+      camera.position.z /
+      CELL_SIZE
+    )
+    *
+    CELL_SIZE;
+
+
+  updateSelection();
+
+
+  renderer.render(
+
+    scene,
+    camera
+
+  );
+
+}
+
+
+/* ============================================================
+   39. START
+   ============================================================ */
+
+async function start() {
+
+  resize();
+
+
+  updateBOM();
+
+
+  await loadBOM();
+
+
+  animate();
+
+}
+
+
+start();
+
+</script>
+
+</body>
+</html>

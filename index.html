@@ -20,23 +20,26 @@
   </title>
 
 
-  <!-- Three.js -->
+  <!-- =======================================================
+       EXTERNE BIBLIOTHEKEN
+       ======================================================= -->
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
-  <!-- OrbitControls -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 
-  <!-- GLTFLoader -->
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 
-  <!-- GSAP -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
 
-  <!-- jsPDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
 
   <style>
+
+    /* =========================================================
+       BASIS
+       ========================================================= */
 
     * {
       box-sizing: border-box;
@@ -54,6 +57,7 @@
     body {
       display: flex;
 
+      width: 100%;
       height: 100vh;
       height: 100dvh;
 
@@ -71,17 +75,18 @@
     }
 
 
-    button,
-    input,
-    select {
+    button {
       font: inherit;
+
+      -webkit-tap-highlight-color:
+        transparent;
     }
 
 
-    /* =========================================================
-       VIEWPORT
-       ========================================================= */
 
+    /* =========================================================
+       3D VIEWPORT
+       ========================================================= */
 
     #viewport {
       position: relative;
@@ -106,23 +111,28 @@
     }
 
 
+
+    /* =========================================================
+       DESKTOP HILFE
+       ========================================================= */
+
     #help {
       position: absolute;
 
       top: 18px;
       left: 18px;
 
-      z-index: 50;
+      z-index: 100;
 
       padding: 10px 13px;
+
+      background:
+        rgba(255, 255, 255, 0.94);
 
       border:
         1px solid rgba(0, 0, 0, 0.08);
 
       border-radius: 8px;
-
-      background:
-        rgba(255, 255, 255, 0.93);
 
       color: #495057;
 
@@ -132,9 +142,14 @@
       pointer-events: none;
 
       box-shadow:
-        0 3px 12px rgba(0, 0, 0, 0.06);
+        0 3px 12px rgba(0,0,0,0.06);
     }
 
+
+
+    /* =========================================================
+       STATUS MELDUNG
+       ========================================================= */
 
     #status {
       position: absolute;
@@ -142,19 +157,19 @@
       left: 18px;
       bottom: 18px;
 
-      z-index: 70;
+      z-index: 1500;
 
       max-width: 600px;
 
       padding: 9px 13px;
 
+      background:
+        rgba(255, 255, 255, 0.97);
+
       border:
         1px solid #dee2e6;
 
       border-radius: 7px;
-
-      background:
-        rgba(255, 255, 255, 0.97);
 
       color: #495057;
 
@@ -183,33 +198,103 @@
     }
 
 
-    /* =========================================================
-       MOBILE MENU BUTTON
-       ========================================================= */
-
-
-    #mobile-menu-button {
-      display: none;
-    }
-
-
-    #mobile-overlay {
-      display: none;
-    }
-
-
-    .mobile-sidebar-header {
-      display: none;
-    }
-
 
     /* =========================================================
-       SIDEBAR
+       OBJEKT TOOLBAR
        ========================================================= */
 
+    #object-toolbar {
+      position: absolute;
+
+      z-index: 1400;
+
+      display: none;
+
+      flex-direction: column;
+
+      gap: 7px;
+
+      pointer-events: auto;
+    }
+
+
+    #object-toolbar.visible {
+      display: flex;
+    }
+
+
+    .object-tool {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      width: 44px;
+      height: 44px;
+
+      padding: 0;
+
+      border: 0;
+
+      border-radius: 50%;
+
+      color: #ffffff;
+
+      cursor: pointer;
+
+      font-size: 21px;
+      font-weight: 800;
+
+      line-height: 1;
+
+      box-shadow:
+        0 5px 15px rgba(0,0,0,0.25);
+
+      transition:
+        transform 0.12s ease,
+        filter 0.12s ease;
+    }
+
+
+    .object-tool:hover {
+      transform:
+        scale(1.08);
+
+      filter:
+        brightness(1.08);
+    }
+
+
+    .object-tool:active {
+      transform:
+        scale(0.94);
+    }
+
+
+    .object-tool-rotate {
+      background: #407bf7;
+    }
+
+
+    .object-tool-copy {
+      background: #28a745;
+    }
+
+
+    .object-tool-delete {
+      background: #d44747;
+    }
+
+
+
+    /* =========================================================
+       SIDEBAR DESKTOP
+       ========================================================= */
 
     #sidebar {
-      z-index: 100;
+      position: relative;
+
+      z-index: 500;
 
       display: flex;
       flex-direction: column;
@@ -223,11 +308,11 @@
         1px solid #dee2e6;
 
       box-shadow:
-        -3px 0 15px rgba(0, 0, 0, 0.05);
+        -3px 0 15px rgba(0,0,0,0.05);
     }
 
 
-    .header {
+    .sidebar-header {
       flex: 0 0 auto;
 
       padding: 20px;
@@ -237,7 +322,7 @@
     }
 
 
-    .header h2 {
+    .sidebar-header h2 {
       margin:
         0 0 4px;
 
@@ -247,7 +332,7 @@
     }
 
 
-    .header p {
+    .sidebar-header p {
       margin: 0;
 
       color: #6c757d;
@@ -256,14 +341,33 @@
     }
 
 
-    .content {
+    .sidebar-content {
       flex: 1;
 
-      padding: 20px;
+      min-height: 0;
 
       overflow-y: auto;
 
-      overscroll-behavior: contain;
+      overscroll-behavior:
+        contain;
+    }
+
+
+
+    /* =========================================================
+       SIDEBAR PANEL
+       ========================================================= */
+
+    .sidebar-panel {
+      padding: 20px;
+
+      border-bottom:
+        1px solid #eeeeee;
+    }
+
+
+    .sidebar-panel:last-child {
+      border-bottom: 0;
     }
 
 
@@ -282,86 +386,10 @@
     }
 
 
-    /* =========================================================
-       DESKTOP SECTIONS
-       ========================================================= */
-
-
-    .desktop-section {
-      display: block;
-    }
-
-
-    .mobile-section {
-      display: contents;
-    }
-
-
-    .mobile-section > summary {
-      display: none;
-    }
-
-
-    .mobile-section-content {
-      display: block;
-    }
-
 
     /* =========================================================
-       ACTION BUTTONS
+       PRODUKTE
        ========================================================= */
-
-
-    .action-controls {
-      display: flex;
-
-      gap: 9px;
-
-      margin-bottom: 24px;
-    }
-
-
-    .btn-action {
-      flex: 1;
-
-      min-height: 42px;
-
-      padding: 10px;
-
-      border: 0;
-
-      border-radius: 6px;
-
-      background: #407bf7;
-
-      color: white;
-
-      cursor: pointer;
-
-      font-size: 13px;
-      font-weight: 650;
-    }
-
-
-    .btn-action:hover {
-      background: #2466ee;
-    }
-
-
-    .btn-danger {
-      background: #d44747;
-    }
-
-
-    .btn-danger:hover {
-      background: #be3434;
-    }
-
-
-    /* =========================================================
-       PRODUCT CARDS
-       ========================================================= */
-
 
     .item-card {
       display: grid;
@@ -385,6 +413,11 @@
         1px solid #e3e6ea;
 
       border-radius: 9px;
+    }
+
+
+    .item-card:last-child {
+      margin-bottom: 0;
     }
 
 
@@ -414,7 +447,8 @@
 
       object-fit: cover;
 
-      object-position: center center;
+      object-position:
+        center center;
     }
 
 
@@ -479,14 +513,13 @@
     .btn-add {
       min-height: 38px;
 
-      padding:
-        8px 9px;
+      padding: 8px 9px;
+
+      background: #111111;
 
       border: 0;
 
       border-radius: 5px;
-
-      background: #111111;
 
       color: #ffffff;
 
@@ -504,25 +537,13 @@
     }
 
 
+
     /* =========================================================
-       FOOTER
+       BOM
        ========================================================= */
 
-
-    .footer {
-      flex: 0 0 auto;
-
-      padding: 20px;
-
-      background: #ffffff;
-
-      border-top:
-        1px solid #eeeeee;
-    }
-
-
     .bom-list {
-      max-height: 145px;
+      max-height: 180px;
 
       margin-bottom: 14px;
 
@@ -590,6 +611,11 @@
     }
 
 
+
+    /* =========================================================
+       EXPORT
+       ========================================================= */
+
     .export-grid {
       display: grid;
 
@@ -606,12 +632,12 @@
 
       padding: 10px;
 
+      background: #ffffff;
+
       border:
         1px solid #ced4da;
 
       border-radius: 6px;
-
-      background: #ffffff;
 
       color: #212529;
 
@@ -635,11 +661,11 @@
 
       padding: 11px;
 
+      background: #111111;
+
       border: 0;
 
       border-radius: 6px;
-
-      background: #111111;
 
       color: #ffffff;
 
@@ -664,12 +690,12 @@
 
       padding: 8px;
 
+      background: transparent;
+
       border:
         1px solid #dc3545;
 
       border-radius: 5px;
-
-      background: transparent;
 
       color: #dc3545;
 
@@ -686,10 +712,35 @@
     }
 
 
+
+    /* =========================================================
+       MOBILE NAVIGATION
+       ========================================================= */
+
+    #mobile-menu-button {
+      display: none;
+    }
+
+
+    #mobile-overlay {
+      display: none;
+    }
+
+
+    .mobile-sidebar-top {
+      display: none;
+    }
+
+
+    .mobile-tabs {
+      display: none;
+    }
+
+
+
     /* =========================================================
        BETA MODAL
        ========================================================= */
-
 
     .beta-modal {
       position: fixed;
@@ -710,7 +761,7 @@
         max(20px, env(safe-area-inset-left));
 
       background:
-        rgba(20, 25, 30, 0.74);
+        rgba(20,25,30,0.74);
 
       backdrop-filter:
         blur(6px);
@@ -726,30 +777,30 @@
       width:
         min(650px, 100%);
 
-      max-height: 90dvh;
+      max-height:
+        90dvh;
 
       padding: 30px;
 
       overflow-y: auto;
 
-      border-radius: 14px;
-
       background: #ffffff;
 
+      border-radius: 14px;
+
       box-shadow:
-        0 20px 70px rgba(0, 0, 0, 0.28);
+        0 20px 70px rgba(0,0,0,0.28);
     }
 
 
     .beta-badge {
       display: inline-block;
 
-      padding:
-        5px 9px;
-
-      border-radius: 5px;
+      padding: 5px 9px;
 
       background: #ffb703;
+
+      border-radius: 5px;
 
       color: #111111;
 
@@ -793,11 +844,11 @@
 
       padding: 14px;
 
+      background: #111111;
+
       border: 0;
 
       border-radius: 7px;
-
-      background: #111111;
 
       color: #ffffff;
 
@@ -807,12 +858,13 @@
     }
 
 
+
     /* =========================================================
-       MOBILE DRAWER
+       SMARTPHONE
        ========================================================= */
 
-
     @media (max-width: 850px) {
+
 
       body {
         display: block;
@@ -828,16 +880,15 @@
       }
 
 
-      #canvas3d {
-        width: 100%;
-        height: 100%;
-      }
-
-
       #help {
         display: none;
       }
 
+
+
+      /* -------------------------------------------------------
+         MENU BUTTON
+         ------------------------------------------------------- */
 
       #mobile-menu-button {
         position: absolute;
@@ -850,11 +901,11 @@
 
         bottom:
           max(
-            22px,
+            20px,
             env(safe-area-inset-bottom)
           );
 
-        z-index: 900;
+        z-index: 1200;
 
         display: flex;
 
@@ -866,25 +917,27 @@
 
         padding: 0;
 
-        border: 0;
-        border-radius: 50%;
-
         background: #111111;
+
+        border: 0;
+
+        border-radius: 50%;
 
         color: #ffffff;
 
         cursor: pointer;
 
         font-size: 25px;
-        font-weight: 700;
 
         box-shadow:
-          0 8px 25px rgba(0, 0, 0, 0.28);
-
-        -webkit-tap-highlight-color:
-          transparent;
+          0 8px 25px rgba(0,0,0,0.28);
       }
 
+
+
+      /* -------------------------------------------------------
+         OVERLAY
+         ------------------------------------------------------- */
 
       #mobile-overlay {
         position: fixed;
@@ -896,7 +949,7 @@
         display: block;
 
         background:
-          rgba(0, 0, 0, 0.38);
+          rgba(0,0,0,0.38);
 
         opacity: 0;
 
@@ -915,6 +968,11 @@
       }
 
 
+
+      /* -------------------------------------------------------
+         DRAWER
+         ------------------------------------------------------- */
+
       #sidebar {
         position: fixed;
 
@@ -924,7 +982,7 @@
         z-index: 2000;
 
         width:
-          min(90vw, 400px);
+          min(94vw, 410px);
 
         height: 100dvh;
 
@@ -934,11 +992,6 @@
         padding-bottom:
           env(safe-area-inset-bottom);
 
-        border-left:
-          1px solid #dee2e6;
-
-        border-top: 0;
-
         transform:
           translateX(105%);
 
@@ -946,7 +999,7 @@
           transform 0.24s ease;
 
         box-shadow:
-          -10px 0 35px rgba(0, 0, 0, 0.20);
+          -10px 0 35px rgba(0,0,0,0.22);
       }
 
 
@@ -956,7 +1009,12 @@
       }
 
 
-      .mobile-sidebar-header {
+
+      /* -------------------------------------------------------
+         MOBILE HEADER
+         ------------------------------------------------------- */
+
+      .mobile-sidebar-top {
         display: flex;
 
         flex: 0 0 auto;
@@ -966,17 +1024,14 @@
 
         min-height: 58px;
 
-        padding:
-          10px 14px;
+        padding: 10px 14px;
 
         border-bottom:
           1px solid #eeeeee;
-
-        background: #ffffff;
       }
 
 
-      .mobile-sidebar-header strong {
+      .mobile-sidebar-top strong {
         font-size: 17px;
       }
 
@@ -992,159 +1047,130 @@
 
         padding: 0;
 
-        border: 0;
-        border-radius: 50%;
-
         background: #f1f3f5;
+
+        border: 0;
+
+        border-radius: 50%;
 
         color: #111111;
 
         cursor: pointer;
 
-        font-size: 27px;
-        line-height: 1;
+        font-size: 26px;
       }
 
 
-      #sidebar > .header {
+      .sidebar-header {
         padding:
-          13px 16px;
+          12px 15px;
       }
 
 
-      #sidebar > .header h2 {
+      .sidebar-header h2 {
         font-size: 17px;
       }
 
 
-      #sidebar > .header p {
+      .sidebar-header p {
         font-size: 12px;
       }
 
 
-      .content {
-        padding: 12px;
+
+      /* -------------------------------------------------------
+         MOBILE TABS
+         ------------------------------------------------------- */
+
+      .mobile-tabs {
+        display: grid;
+
+        flex: 0 0 auto;
+
+        grid-template-columns:
+          1fr
+          1fr
+          1fr;
+
+        gap: 5px;
+
+        padding: 8px;
+
+        background: #f8f9fa;
+
+        border-bottom:
+          1px solid #e9ecef;
+      }
+
+
+      .mobile-tab {
+        min-height: 44px;
+
+        padding: 7px 5px;
+
+        background: transparent;
+
+        border: 0;
+
+        border-radius: 7px;
+
+        color: #6c757d;
+
+        cursor: pointer;
+
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+
+      .mobile-tab.active {
+        background: #111111;
+
+        color: #ffffff;
+      }
+
+
+
+      /* -------------------------------------------------------
+         PANELS MOBILE
+         ------------------------------------------------------- */
+
+      .sidebar-content {
+        flex: 1;
+
+        min-height: 0;
 
         overflow-y: auto;
       }
 
 
-      .footer {
-        padding: 12px;
+      .sidebar-panel {
+        display: none;
 
-        border-top: 0;
+        padding: 14px;
+
+        border: 0;
       }
 
 
-      /* ============================================
-         MOBILE ACCORDION
-         ============================================ */
+      .sidebar-panel.active {
+        display: block;
+      }
 
 
-      .desktop-section {
+      .section-title {
         display: none;
       }
 
 
-      .mobile-section {
-        display: block;
 
-        margin-bottom: 10px;
-
-        overflow: hidden;
-
-        border:
-          1px solid #e5e7eb;
-
-        border-radius: 9px;
-
-        background: #ffffff;
-      }
-
-
-      .mobile-section > summary {
-        position: relative;
-
-        display: block;
-
-        min-height: 48px;
-
-        padding:
-          14px 44px 14px 14px;
-
-        list-style: none;
-
-        cursor: pointer;
-
-        color: #212529;
-
-        font-size: 13px;
-        font-weight: 700;
-
-        -webkit-tap-highlight-color:
-          transparent;
-      }
-
-
-      .mobile-section > summary::-webkit-details-marker {
-        display: none;
-      }
-
-
-      .mobile-section > summary::after {
-        content: "›";
-
-        position: absolute;
-
-        top: 50%;
-        right: 17px;
-
-        transform:
-          translateY(-50%)
-          rotate(90deg);
-
-        color: #6c757d;
-
-        font-size: 22px;
-
-        transition:
-          transform 0.15s ease;
-      }
-
-
-      .mobile-section[open] > summary::after {
-        transform:
-          translateY(-50%)
-          rotate(-90deg);
-      }
-
-
-      .mobile-section-content {
-        display: block;
-
-        padding:
-          0 10px 10px;
-      }
-
-
-      .action-controls {
-        margin-bottom: 0;
-      }
-
-
-      .btn-action {
-        min-height: 48px;
-
-        font-size: 13px;
-      }
-
-
-      /* Product cards */
-
+      /* -------------------------------------------------------
+         PRODUCT CARDS MOBILE
+         ------------------------------------------------------- */
 
       .item-card {
         grid-template-columns:
-          76px
+          78px
           minmax(0, 1fr);
 
         gap: 10px;
@@ -1154,12 +1180,7 @@
 
 
       .item-image-wrap {
-        width: 76px;
-      }
-
-
-      .item-name {
-        font-size: 13px;
+        width: 78px;
       }
 
 
@@ -1169,16 +1190,26 @@
 
         width: 100%;
 
-        min-height: 45px;
+        min-height: 46px;
 
         font-size: 12px;
       }
 
 
+
+      /* -------------------------------------------------------
+         BOM MOBILE
+         ------------------------------------------------------- */
+
       .bom-list {
-        max-height: 220px;
+        max-height: none;
       }
 
+
+
+      /* -------------------------------------------------------
+         EXPORT MOBILE
+         ------------------------------------------------------- */
 
       .export-grid {
         grid-template-columns: 1fr;
@@ -1190,10 +1221,33 @@
       }
 
 
+
+      /* -------------------------------------------------------
+         OBJECT TOOLBAR MOBILE
+         ------------------------------------------------------- */
+
+      .object-tool {
+        width: 50px;
+        height: 50px;
+
+        font-size: 23px;
+      }
+
+
+      #object-toolbar {
+        gap: 8px;
+      }
+
+
+
+      /* -------------------------------------------------------
+         STATUS MOBILE
+         ------------------------------------------------------- */
+
       #status {
         left: 12px;
 
-        right: 84px;
+        right: 86px;
 
         bottom:
           max(
@@ -1205,6 +1259,11 @@
       }
 
 
+
+      /* -------------------------------------------------------
+         BETA
+         ------------------------------------------------------- */
+
       .beta-box {
         padding: 22px;
       }
@@ -1212,27 +1271,6 @@
 
       .beta-box h2 {
         font-size: 20px;
-      }
-
-    }
-
-
-    @media (max-width: 420px) {
-
-      #sidebar {
-        width: 94vw;
-      }
-
-
-      .item-card {
-        grid-template-columns:
-          70px
-          minmax(0, 1fr);
-      }
-
-
-      .item-image-wrap {
-        width: 70px;
       }
 
     }
@@ -1246,9 +1284,8 @@
 
 
 <!-- =========================================================
-     BETA MODAL
+     BETA HINWEIS
      ========================================================= -->
-
 
 <div
   id="beta-modal"
@@ -1261,9 +1298,11 @@
       BETA
     </div>
 
+
     <h2>
       Willkommen im ModuDisplays 3D-Konfigurator
     </h2>
+
 
     <p>
       Mit diesem Konfigurator können Sie Ihre eigene kleine
@@ -1273,12 +1312,17 @@
       Komponenten wird laufend erweitert.
     </p>
 
+
     <p>
-      <strong>Bitte beachten Sie:</strong>
+      <strong>
+        Bitte beachten Sie:
+      </strong>
+
       Der Konfigurator befindet sich derzeit in der Beta-Phase
       und ist noch nicht direkt mit dem Warenkorb unseres
       Onlineshops verbunden.
     </p>
+
 
     <p>
       Sie können Ihre Konfiguration dennoch problemlos bestellen.
@@ -1293,15 +1337,20 @@
       Gerne erstellen wir Ihnen daraus ein persönliches Angebot.
     </p>
 
+
     <p>
       Vielen Dank für Ihr Verständnis.
       Wir wünschen Ihnen viel Freude beim Planen und Bauen Ihrer
       eigenen ModuDisplays-Welt!
     </p>
 
+
     <p>
-      <strong>Ihr DesignLab</strong>
+      <strong>
+        Ihr DesignLab
+      </strong>
     </p>
+
 
     <button
       class="beta-button"
@@ -1318,11 +1367,11 @@
 
 
 <!-- =========================================================
-     3D VIEWPORT
+     VIEWPORT
      ========================================================= -->
 
-
 <div id="viewport">
+
 
   <canvas id="canvas3d"></canvas>
 
@@ -1350,20 +1399,73 @@
     <br>
 
     R:
-    90° drehen
+    drehen
+
+    <br>
+
+    C:
+    kopieren
 
     <br>
 
     Entf:
-    Löschen
+    löschen
 
   </div>
+
 
 
   <div id="status"></div>
 
 
-  <!-- MOBILE MENU -->
+
+  <!-- =======================================================
+       OBJEKT BUTTONS
+       ======================================================= -->
+
+  <div id="object-toolbar">
+
+
+    <button
+      class="object-tool object-tool-rotate"
+      type="button"
+      title="90° drehen"
+      aria-label="90 Grad drehen"
+      onclick="rotateActivePart()"
+    >
+      ↻
+    </button>
+
+
+    <button
+      class="object-tool object-tool-copy"
+      type="button"
+      title="Bauteil kopieren"
+      aria-label="Bauteil kopieren"
+      onclick="copyActivePart()"
+    >
+      ⧉
+    </button>
+
+
+    <button
+      class="object-tool object-tool-delete"
+      type="button"
+      title="Bauteil löschen"
+      aria-label="Bauteil löschen"
+      onclick="deleteActivePart()"
+    >
+      ×
+    </button>
+
+
+  </div>
+
+
+
+  <!-- =======================================================
+       MOBILE MENU
+       ======================================================= -->
 
   <button
     id="mobile-menu-button"
@@ -1374,6 +1476,7 @@
     ☰
   </button>
 
+
 </div>
 
 
@@ -1381,7 +1484,6 @@
 <!-- =========================================================
      MOBILE OVERLAY
      ========================================================= -->
-
 
 <div
   id="mobile-overlay"
@@ -1394,15 +1496,17 @@
      SIDEBAR
      ========================================================= -->
 
-
 <aside id="sidebar">
 
 
-  <div class="mobile-sidebar-header">
+  <!-- MOBILE TOP -->
+
+  <div class="mobile-sidebar-top">
 
     <strong>
       ModuDisplays
     </strong>
+
 
     <button
       class="mobile-close-button"
@@ -1416,7 +1520,10 @@
   </div>
 
 
-  <div class="header">
+
+  <!-- HEADER -->
+
+  <div class="sidebar-header">
 
     <h2>
       ModuDisplays 3D
@@ -1430,234 +1537,39 @@
 
 
 
-  <div class="content">
+  <!-- MOBILE TABS -->
+
+  <div class="mobile-tabs">
 
 
-    <!-- =========================================
-         MOBILE: BAUTEIL-AKTIONEN
-         ========================================= -->
-
-
-    <details
-      class="mobile-section"
+    <button
+      class="mobile-tab active"
+      type="button"
+      data-panel="products"
+      onclick="showMobilePanel('products')"
     >
-
-      <summary>
-        Gewähltes Bauteil
-      </summary>
-
-      <div class="mobile-section-content">
-
-        <div class="action-controls">
-
-          <button
-            class="btn-action"
-            type="button"
-            onclick="rotateActivePart()"
-          >
-            ↻ 90° drehen
-          </button>
-
-          <button
-            class="btn-action btn-danger"
-            type="button"
-            onclick="deleteActivePart()"
-          >
-            Löschen
-          </button>
-
-        </div>
-
-      </div>
-
-    </details>
+      🧩 Artikel
+    </button>
 
 
-
-    <!-- DESKTOP ACTIONS -->
-
-
-    <div class="desktop-section">
-
-      <div class="section-title">
-        Gewähltes Bauteil
-      </div>
-
-      <div class="action-controls">
-
-        <button
-          class="btn-action"
-          type="button"
-          onclick="rotateActivePart()"
-        >
-          ↻ 90° drehen
-        </button>
-
-        <button
-          class="btn-action btn-danger"
-          type="button"
-          onclick="deleteActivePart()"
-        >
-          Löschen
-        </button>
-
-      </div>
-
-    </div>
-
-
-
-    <!-- =========================================
-         MOBILE PRODUCTS
-         ========================================= -->
-
-
-    <details
-      class="mobile-section"
-      open
+    <button
+      class="mobile-tab"
+      type="button"
+      data-panel="bom"
+      onclick="showMobilePanel('bom')"
     >
-
-      <summary>
-        Bauteile auswählen
-      </summary>
-
-      <div class="mobile-section-content">
-
-        <div id="mobile-product-list"></div>
-
-      </div>
-
-    </details>
+      🧾 Stückliste
+    </button>
 
 
-
-    <!-- DESKTOP PRODUCTS -->
-
-
-    <div class="desktop-section">
-
-      <div class="section-title">
-        Verfügbare Artikel
-      </div>
-
-      <div id="product-list">
-        Artikel werden geladen …
-      </div>
-
-    </div>
-
-
-
-    <!-- =========================================
-         MOBILE BOM
-         ========================================= -->
-
-
-    <details
-      class="mobile-section"
+    <button
+      class="mobile-tab"
+      type="button"
+      data-panel="export"
+      onclick="showMobilePanel('export')"
     >
-
-      <summary>
-        Stückliste
-      </summary>
-
-      <div class="mobile-section-content">
-
-        <div
-          id="mobile-bom-summary"
-          class="bom-list"
-        ></div>
-
-
-        <div class="total-row">
-
-          <span>
-            Gesamtsumme
-          </span>
-
-          <span id="mobile-total-price">
-            0,00 €
-          </span>
-
-        </div>
-
-      </div>
-
-    </details>
-
-
-
-    <!-- =========================================
-         MOBILE EXPORT
-         ========================================= -->
-
-
-    <details
-      class="mobile-section"
-    >
-
-      <summary>
-        Export &amp; Anfrage
-      </summary>
-
-      <div class="mobile-section-content">
-
-        <div class="export-grid">
-
-          <button
-            class="btn-export"
-            type="button"
-            onclick="exportPDF()"
-          >
-            PDF erstellen
-          </button>
-
-          <button
-            class="btn-export"
-            type="button"
-            onclick="exportImage()"
-          >
-            PNG speichern
-          </button>
-
-          <button
-            class="btn-export"
-            type="button"
-            onclick="copyBOM()"
-          >
-            Stückliste kopieren
-          </button>
-
-          <button
-            class="btn-export"
-            type="button"
-            onclick="showBetaModal()"
-          >
-            Beta-Hinweis
-          </button>
-
-          <button
-            class="btn-email"
-            type="button"
-            onclick="prepareEmail()"
-          >
-            Anfrage per E-Mail
-          </button>
-
-        </div>
-
-
-        <button
-          class="btn-reset"
-          type="button"
-          onclick="resetConfiguration()"
-        >
-          Konfiguration zurücksetzen
-        </button>
-
-      </div>
-
-    </details>
+      📤 Export
+    </button>
 
 
   </div>
@@ -1665,88 +1577,146 @@
 
 
   <!-- =======================================================
-       DESKTOP FOOTER
+       SIDEBAR CONTENT
        ======================================================= -->
 
-
-  <div class="footer desktop-section">
-
-    <div class="section-title">
-      Stückliste
-    </div>
+  <div class="sidebar-content">
 
 
-    <div
-      id="bom-summary"
-      class="bom-list"
-    ></div>
+    <!-- =====================================================
+         PRODUKTE
+         ===================================================== -->
 
-
-    <div class="total-row">
-
-      <span>
-        Gesamtsumme
-      </span>
-
-      <span id="total-price">
-        0,00 €
-      </span>
-
-    </div>
-
-
-    <div class="export-grid">
-
-      <button
-        class="btn-export"
-        type="button"
-        onclick="exportPDF()"
-      >
-        PDF erstellen
-      </button>
-
-      <button
-        class="btn-export"
-        type="button"
-        onclick="exportImage()"
-      >
-        PNG speichern
-      </button>
-
-      <button
-        class="btn-export"
-        type="button"
-        onclick="copyBOM()"
-      >
-        Stückliste kopieren
-      </button>
-
-      <button
-        class="btn-export"
-        type="button"
-        onclick="showBetaModal()"
-      >
-        Beta-Hinweis
-      </button>
-
-      <button
-        class="btn-email"
-        type="button"
-        onclick="prepareEmail()"
-      >
-        Anfrage per E-Mail vorbereiten
-      </button>
-
-    </div>
-
-
-    <button
-      class="btn-reset"
-      type="button"
-      onclick="resetConfiguration()"
+    <section
+      id="panel-products"
+      class="sidebar-panel active"
     >
-      Konfiguration zurücksetzen
-    </button>
+
+      <div class="section-title">
+        Verfügbare Artikel
+      </div>
+
+
+      <div id="product-list">
+        Artikel werden geladen …
+      </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         STÜCKLISTE
+         ===================================================== -->
+
+    <section
+      id="panel-bom"
+      class="sidebar-panel"
+    >
+
+      <div class="section-title">
+        Stückliste
+      </div>
+
+
+      <div
+        id="bom-summary"
+        class="bom-list"
+      ></div>
+
+
+      <div class="total-row">
+
+        <span>
+          Gesamtsumme
+        </span>
+
+        <span id="total-price">
+          0,00 €
+        </span>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- =====================================================
+         EXPORT
+         ===================================================== -->
+
+    <section
+      id="panel-export"
+      class="sidebar-panel"
+    >
+
+      <div class="section-title">
+        Export &amp; Anfrage
+      </div>
+
+
+      <div class="export-grid">
+
+
+        <button
+          class="btn-export"
+          type="button"
+          onclick="exportPDF()"
+        >
+          PDF erstellen
+        </button>
+
+
+        <button
+          class="btn-export"
+          type="button"
+          onclick="exportImage()"
+        >
+          PNG speichern
+        </button>
+
+
+        <button
+          class="btn-export"
+          type="button"
+          onclick="copyBOM()"
+        >
+          Stückliste kopieren
+        </button>
+
+
+        <button
+          class="btn-export"
+          type="button"
+          onclick="showBetaModal()"
+        >
+          Beta-Hinweis
+        </button>
+
+
+        <button
+          class="btn-email"
+          type="button"
+          onclick="prepareEmail()"
+        >
+          Anfrage per E-Mail
+        </button>
+
+
+      </div>
+
+
+      <button
+        class="btn-reset"
+        type="button"
+        onclick="resetConfiguration()"
+      >
+        Konfiguration zurücksetzen
+      </button>
+
+
+    </section>
+
 
   </div>
 
@@ -1757,11 +1727,9 @@
 
 <script>
 
-
 /* ============================================================
-   GLOBAL STATE
+   STATE
    ============================================================ */
-
 
 let CELL_SIZE =
   0.06;
@@ -1816,7 +1784,6 @@ let statusTimeout =
    DOM
    ============================================================ */
 
-
 const canvas =
   document.getElementById(
     "canvas3d"
@@ -1829,11 +1796,16 @@ const statusElement =
   );
 
 
+const objectToolbar =
+  document.getElementById(
+    "object-toolbar"
+  );
+
+
 
 /* ============================================================
    THREE.JS
    ============================================================ */
-
 
 const scene =
   new THREE.Scene();
@@ -1928,7 +1900,6 @@ renderer.outputEncoding =
    CONTROLS
    ============================================================ */
 
-
 const controls =
   new THREE.OrbitControls(
 
@@ -1967,14 +1938,14 @@ controls.maxDistance =
 
 
 controls.maxPolarAngle =
-  Math.PI / 2.02;
+  Math.PI /
+  2.02;
 
 
 
 /* ============================================================
    LIGHT
    ============================================================ */
-
 
 scene.add(
 
@@ -2027,7 +1998,6 @@ scene.add(
    GRID
    ============================================================ */
 
-
 const gridGeometry =
   new THREE.PlaneGeometry(
 
@@ -2040,7 +2010,8 @@ const gridGeometry =
 
 gridGeometry.rotateX(
 
-  -Math.PI / 2
+  -Math.PI /
+  2
 
 );
 
@@ -2239,9 +2210,13 @@ const gridMaterial =
 
 
         gl_FragColor =
+
           vec4(
+
             color,
+
             alpha
+
           );
 
       }
@@ -2276,7 +2251,6 @@ scene.add(
    INTERACTION
    ============================================================ */
 
-
 const raycaster =
   new THREE.Raycaster();
 
@@ -2289,9 +2263,13 @@ const dragPlane =
   new THREE.Plane(
 
     new THREE.Vector3(
+
       0,
+
       1,
+
       0
+
     ),
 
     0
@@ -2309,14 +2287,11 @@ const dragOffset =
 
 const originalGrid = {
 
-  x:
-    0,
+  x: 0,
 
-  z:
-    0
+  z: 0
 
 };
-
 
 
 const loader =
@@ -2325,9 +2300,8 @@ const loader =
 
 
 /* ============================================================
-   MOBILE DRAWER
+   MOBILE SIDEBAR
    ============================================================ */
-
 
 function openMobileMenu() {
 
@@ -2380,9 +2354,75 @@ function closeMobileMenu() {
 
 
 /* ============================================================
-   BETA MODAL
+   MOBILE PANELS
    ============================================================ */
 
+function showMobilePanel(
+  name
+) {
+
+  document
+    .querySelectorAll(
+      ".sidebar-panel"
+    )
+    .forEach(
+
+      panel => {
+
+        panel.classList.remove(
+          "active"
+        );
+
+      }
+
+    );
+
+
+  const target =
+    document.getElementById(
+      `panel-${name}`
+    );
+
+
+  if (
+    target
+  ) {
+
+    target.classList.add(
+      "active"
+    );
+
+  }
+
+
+  document
+    .querySelectorAll(
+      ".mobile-tab"
+    )
+    .forEach(
+
+      button => {
+
+        button.classList.toggle(
+
+          "active",
+
+          button.dataset.panel ===
+          name
+
+        );
+
+      }
+
+    );
+
+}
+
+
+
+/* ============================================================
+   BETA
+   ============================================================ */
 
 function closeBetaModal() {
 
@@ -2418,9 +2458,8 @@ function showBetaModal() {
 
 
 /* ============================================================
-   BOM LOAD
+   BOM.JSON LADEN
    ============================================================ */
-
 
 async function loadBOM() {
 
@@ -2509,7 +2548,7 @@ async function loadBOM() {
         `Konfigurator · ${data.gridSizeMM || 60} × ${data.gridSizeMM || 60} mm Raster`;
 
 
-    renderProductLists();
+    renderProductList();
 
 
     updateBOM();
@@ -2540,178 +2579,18 @@ async function loadBOM() {
 
 
 /* ============================================================
-   PRODUCT CARDS
+   PRODUKTLISTE
    ============================================================ */
 
+function renderProductList() {
 
-function createProductCard(
-  product
-) {
-
-  const card =
-    document.createElement(
-      "div"
-    );
-
-
-  card.className =
-    "item-card";
-
-
-  const imageName =
-    product.image ||
-    "";
-
-
-  card.innerHTML = `
-
-    <div class="item-image-wrap">
-
-      <img
-        class="item-image"
-        src="./images/${escapeHTML(imageName)}"
-        alt="${escapeHTML(product.name)}"
-        loading="lazy"
-      >
-
-    </div>
-
-
-    <div class="item-info">
-
-      <span class="item-name">
-        ${escapeHTML(product.name)}
-      </span>
-
-      <span class="item-meta">
-        ${product.cellsX} × ${product.cellsZ}
-        Rasterfelder
-      </span>
-
-      <span class="item-price">
-        ${formatPrice(product.price)}
-      </span>
-
-    </div>
-
-
-    <button
-      class="btn-add"
-      type="button"
-    >
-      + Hinzufügen
-    </button>
-
-  `;
-
-
-  card
-    .querySelector(
-      ".btn-add"
-    )
-    .addEventListener(
-
-      "click",
-
-      async () => {
-
-        await addPart(
-          product.id
-        );
-
-
-        /*
-          Auf Mobile Menü nach Auswahl schließen.
-        */
-
-        if (
-          window.innerWidth <=
-          850
-        ) {
-
-          closeMobileMenu();
-
-        }
-
-      }
-
-    );
-
-
-  const image =
-    card.querySelector(
-      ".item-image"
-    );
-
-
-  const imageWrap =
-    card.querySelector(
-      ".item-image-wrap"
-    );
-
-
-  if (
-    !imageName
-  ) {
-
-    image.style.display =
-      "none";
-
-
-    imageWrap.classList.add(
-      "image-missing"
-    );
-
-  }
-
-  else {
-
-    image.addEventListener(
-
-      "error",
-
-      () => {
-
-        image.style.display =
-          "none";
-
-
-        imageWrap.classList.add(
-          "image-missing"
-        );
-
-      }
-
-    );
-
-  }
-
-
-  return card;
-
-}
-
-
-
-function renderProductLists() {
-
-  const desktop =
+  const container =
     document.getElementById(
       "product-list"
     );
 
 
-  const mobile =
-    document.getElementById(
-      "mobile-product-list"
-    );
-
-
-  desktop.innerHTML =
-    "";
-
-
-  mobile.innerHTML =
+  container.innerHTML =
     "";
 
 
@@ -2720,21 +2599,155 @@ function renderProductLists() {
     of products
   ) {
 
-    desktop.appendChild(
+    const card =
+      document.createElement(
+        "div"
+      );
 
-      createProductCard(
-        product
+
+    card.className =
+      "item-card";
+
+
+    const imageName =
+      product.image ||
+      "";
+
+
+    card.innerHTML = `
+
+      <div class="item-image-wrap">
+
+        <img
+          class="item-image"
+          src="./images/${escapeHTML(imageName)}"
+          alt="${escapeHTML(product.name)}"
+          loading="lazy"
+        >
+
+      </div>
+
+
+      <div class="item-info">
+
+        <span class="item-name">
+          ${escapeHTML(product.name)}
+        </span>
+
+
+        <span class="item-meta">
+          ${product.cellsX} × ${product.cellsZ}
+          Rasterfelder
+        </span>
+
+
+        <span class="item-price">
+          ${formatPrice(product.price)}
+        </span>
+
+      </div>
+
+
+      <button
+        class="btn-add"
+        type="button"
+      >
+        + Hinzufügen
+      </button>
+
+    `;
+
+
+    card
+      .querySelector(
+        ".btn-add"
       )
+      .addEventListener(
 
-    );
+        "click",
+
+        async () => {
+
+          await addPart(
+            product.id
+          );
 
 
-    mobile.appendChild(
+          /*
+            Smartphone:
+            nach dem Hinzufügen Drawer schließen,
+            damit das Bauteil direkt sichtbar ist.
+          */
 
-      createProductCard(
-        product
-      )
+          if (
+            window.innerWidth <=
+            850
+          ) {
 
+            closeMobileMenu();
+
+          }
+
+        }
+
+      );
+
+
+    const image =
+      card.querySelector(
+        ".item-image"
+      );
+
+
+    const imageWrap =
+      card.querySelector(
+        ".item-image-wrap"
+      );
+
+
+    if (
+      !imageName
+    ) {
+
+      image.style.display =
+        "none";
+
+
+      imageWrap
+        .classList
+        .add(
+          "image-missing"
+        );
+
+    }
+
+    else {
+
+      image.addEventListener(
+
+        "error",
+
+        () => {
+
+          image.style.display =
+            "none";
+
+
+          imageWrap
+            .classList
+            .add(
+              "image-missing"
+            );
+
+        }
+
+      );
+
+    }
+
+
+    container.appendChild(
+      card
     );
 
   }
@@ -2744,9 +2757,8 @@ function renderProductLists() {
 
 
 /* ============================================================
-   GRID UTILS
+   GRID
    ============================================================ */
-
 
 function gridToWorld(
   value
@@ -2788,9 +2800,8 @@ function cellKey(
 
 
 /* ============================================================
-   ROTATION / COLLISION
+   ROTATION
    ============================================================ */
-
 
 function getRotationSteps(
   object
@@ -2810,6 +2821,10 @@ function getRotationSteps(
 }
 
 
+
+/* ============================================================
+   COLLISION ROTATION
+   ============================================================ */
 
 function getCollisionRotationSteps(
   product
@@ -2831,7 +2846,9 @@ function getCollisionRotationSteps(
         degrees /
         90
       )
+
       %
+
       4
     )
 
@@ -2848,6 +2865,10 @@ function getCollisionRotationSteps(
 }
 
 
+
+/* ============================================================
+   CELL ROTATION
+   ============================================================ */
 
 function rotateCell(
 
@@ -2921,6 +2942,10 @@ function rotateCell(
 
 
 
+/* ============================================================
+   BASIS KOLLISIONSFELDER
+   ============================================================ */
+
 function getBaseOccupiedCells(
   product
 ) {
@@ -2983,6 +3008,10 @@ function getBaseOccupiedCells(
 
 
 
+/* ============================================================
+   ROTIERTE KOLLISIONSFELDER
+   ============================================================ */
+
 function getRotatedLocalCells(
   object
 ) {
@@ -3006,6 +3035,7 @@ function getRotatedLocalCells(
     .map(
 
       ([x, z]) =>
+
         rotateCell(
 
           x,
@@ -3025,14 +3055,16 @@ function getRotatedLocalCells(
 
   const correctionQuarterTurn =
 
-    correctionSteps === 1
+    correctionSteps ===
+    1
 
     ||
 
-    correctionSteps === 3;
+    correctionSteps ===
+    3;
 
 
-  const correctedX =
+  const correctedCellsX =
 
     correctionQuarterTurn
 
@@ -3041,7 +3073,7 @@ function getRotatedLocalCells(
       : product.cellsX;
 
 
-  const correctedZ =
+  const correctedCellsZ =
 
     correctionQuarterTurn
 
@@ -3060,15 +3092,16 @@ function getRotatedLocalCells(
     cells.map(
 
       ([x, z]) =>
+
         rotateCell(
 
           x,
 
           z,
 
-          correctedX,
+          correctedCellsX,
 
-          correctedZ,
+          correctedCellsZ,
 
           objectSteps
 
@@ -3083,6 +3116,10 @@ function getRotatedLocalCells(
 
 
 
+/* ============================================================
+   WELT KOLLISIONSFELDER
+   ============================================================ */
+
 function getOccupiedCells(
 
   object,
@@ -3096,7 +3133,6 @@ function getOccupiedCells(
   return getRotatedLocalCells(
     object
   )
-
   .map(
 
     ([x, z]) => ({
@@ -3116,6 +3152,10 @@ function getOccupiedCells(
 }
 
 
+
+/* ============================================================
+   KOLLISION
+   ============================================================ */
 
 function canPlaceObject(
 
@@ -3178,6 +3218,10 @@ function canPlaceObject(
 
 
 
+/* ============================================================
+   OCCUPANCY CLEAR
+   ============================================================ */
+
 function clearOccupancy(
   object
 ) {
@@ -3194,7 +3238,8 @@ function clearOccupancy(
     ) => {
 
       if (
-        value === object
+        value ===
+        object
       ) {
 
         remove.push(
@@ -3222,6 +3267,10 @@ function clearOccupancy(
 }
 
 
+
+/* ============================================================
+   OCCUPANCY SET
+   ============================================================ */
 
 function occupyObject(
 
@@ -3280,9 +3329,8 @@ function occupyObject(
 
 
 /* ============================================================
-   FIND FREE POSITION
+   FREIEN PLATZ SUCHEN
    ============================================================ */
-
 
 function findFreePosition(
   object
@@ -3361,11 +3409,9 @@ function findFreePosition(
 
   return {
 
-    x:
-      0,
+    x: 0,
 
-    z:
-      0
+    z: 0
 
   };
 
@@ -3374,9 +3420,8 @@ function findFreePosition(
 
 
 /* ============================================================
-   GLTF
+   GLTF LOAD
    ============================================================ */
-
 
 function loadModel(
   product
@@ -3408,6 +3453,7 @@ function loadModel(
           `./models/${product.model}`,
 
           gltf =>
+
             resolve(
               gltf.scene
             ),
@@ -3437,6 +3483,10 @@ function loadModel(
 }
 
 
+
+/* ============================================================
+   MODEL PREPARE
+   ============================================================ */
 
 function prepareModel(
   model
@@ -3498,6 +3548,10 @@ function prepareModel(
 }
 
 
+
+/* ============================================================
+   MODELL URSPRUNG NORMALISIEREN
+   ============================================================ */
 
 function normalizeModelOrigin(
   object
@@ -3567,6 +3621,10 @@ function normalizeModelOrigin(
 
 
 
+/* ============================================================
+   VISUELLE ROTATION
+   ============================================================ */
+
 function applyRotation(
 
   object,
@@ -3617,6 +3675,7 @@ function applyRotation(
 
   }
 
+
   else if (
     steps === 2
   ) {
@@ -3629,6 +3688,7 @@ function applyRotation(
       depth;
 
   }
+
 
   else if (
     steps === 3
@@ -3714,9 +3774,113 @@ function applyRotation(
 
 
 /* ============================================================
-   ADD PART
+   OBJEKT ERZEUGEN
    ============================================================ */
 
+async function createObjectFromProduct(
+
+  productId,
+
+  rotationSteps =
+    0
+
+) {
+
+  const product =
+    productMap.get(
+      productId
+    );
+
+
+  const template =
+    await loadModel(
+      product
+    );
+
+
+  const model =
+    prepareModel(
+
+      template.clone(
+        true
+      )
+
+    );
+
+
+  const wrapper =
+    new THREE.Group();
+
+
+  const rotationRoot =
+    new THREE.Group();
+
+
+  rotationRoot.add(
+    model
+  );
+
+
+  wrapper.add(
+    rotationRoot
+  );
+
+
+  wrapper.userData = {
+
+    isSelectable:
+      true,
+
+    productId:
+      product.id,
+
+    gridX:
+      0,
+
+    gridZ:
+      0,
+
+    rotationSteps:
+      rotationSteps,
+
+    modelRoot:
+      model,
+
+    rotationRoot:
+      rotationRoot,
+
+    modelWidth:
+      0,
+
+    modelDepth:
+      0
+
+  };
+
+
+  normalizeModelOrigin(
+    wrapper
+  );
+
+
+  applyRotation(
+
+    wrapper,
+
+    false
+
+  );
+
+
+  return wrapper;
+
+}
+
+
+
+/* ============================================================
+   PRODUKT HINZUFÜGEN
+   ============================================================ */
 
 async function addPart(
   productId
@@ -3744,84 +3908,14 @@ async function addPart(
 
   try {
 
-    const template =
-      await loadModel(
-        product
-      );
-
-
-    const model =
-      prepareModel(
-
-        template.clone(
-          true
-        )
-
-      );
-
-
     const wrapper =
-      new THREE.Group();
+      await createObjectFromProduct(
 
+        productId,
 
-    const rotationRoot =
-      new THREE.Group();
-
-
-    rotationRoot.add(
-      model
-    );
-
-
-    wrapper.add(
-      rotationRoot
-    );
-
-
-    wrapper.userData = {
-
-      isSelectable:
-        true,
-
-      productId:
-        product.id,
-
-      gridX:
-        0,
-
-      gridZ:
-        0,
-
-      rotationSteps:
-        0,
-
-      modelRoot:
-        model,
-
-      rotationRoot:
-        rotationRoot,
-
-      modelWidth:
-        0,
-
-      modelDepth:
         0
 
-    };
-
-
-    normalizeModelOrigin(
-      wrapper
-    );
-
-
-    applyRotation(
-
-      wrapper,
-
-      false
-
-    );
+      );
 
 
     scene.add(
@@ -3880,8 +3974,7 @@ async function addPart(
 
       {
 
-        y:
-          0,
+        y: 0,
 
         duration:
           0.28,
@@ -3927,9 +4020,302 @@ async function addPart(
 
 
 /* ============================================================
-   SELECTION
+   OBJEKT KOPIEREN
    ============================================================ */
 
+async function copyActivePart() {
+
+  if (
+    !activeObject
+  ) {
+
+    return;
+
+  }
+
+
+  const original =
+    activeObject;
+
+
+  const productId =
+    original.userData.productId;
+
+
+  const product =
+    productMap.get(
+      productId
+    );
+
+
+  const rotationSteps =
+    getRotationSteps(
+      original
+    );
+
+
+  showStatus(
+    `${product.name} wird kopiert …`
+  );
+
+
+  try {
+
+    const copy =
+      await createObjectFromProduct(
+
+        productId,
+
+        rotationSteps
+
+      );
+
+
+    scene.add(
+      copy
+    );
+
+
+    const originalX =
+      original.userData.gridX;
+
+
+    const originalZ =
+      original.userData.gridZ;
+
+
+    /*
+      Erst in direkter Umgebung suchen.
+      1 Feld Abstand reicht für kleinere Teile.
+
+      Falls dort kein Platz ist,
+      wird global ein freier Platz gesucht.
+    */
+
+    const candidates = [
+
+      {
+        x:
+          originalX + 1,
+
+        z:
+          originalZ
+      },
+
+      {
+        x:
+          originalX,
+
+        z:
+          originalZ + 1
+      },
+
+      {
+        x:
+          originalX - 1,
+
+        z:
+          originalZ
+      },
+
+      {
+        x:
+          originalX,
+
+        z:
+          originalZ - 1
+      },
+
+      {
+        x:
+          originalX + 2,
+
+        z:
+          originalZ
+      },
+
+      {
+        x:
+          originalX,
+
+        z:
+          originalZ + 2
+      },
+
+      {
+        x:
+          originalX - 2,
+
+        z:
+          originalZ
+      },
+
+      {
+        x:
+          originalX,
+
+        z:
+          originalZ - 2
+      },
+
+      {
+        x:
+          originalX + 3,
+
+        z:
+          originalZ
+      },
+
+      {
+        x:
+          originalX,
+
+        z:
+          originalZ + 3
+      }
+
+    ];
+
+
+    let target =
+      null;
+
+
+    for (
+      const candidate
+      of candidates
+    ) {
+
+      if (
+
+        canPlaceObject(
+
+          copy,
+
+          candidate.x,
+
+          candidate.z
+
+        )
+
+      ) {
+
+        target =
+          candidate;
+
+
+        break;
+
+      }
+
+    }
+
+
+    if (
+      !target
+    ) {
+
+      target =
+        findFreePosition(
+          copy
+        );
+
+    }
+
+
+    copy.position.set(
+
+      gridToWorld(
+        target.x
+      ),
+
+      0.025,
+
+      gridToWorld(
+        target.z
+      )
+
+    );
+
+
+    occupyObject(
+
+      copy,
+
+      target.x,
+
+      target.z
+
+    );
+
+
+    placedObjects.push(
+      copy
+    );
+
+
+    setActiveObject(
+      copy
+    );
+
+
+    updateBOM();
+
+
+    gsap.to(
+
+      copy.position,
+
+      {
+
+        y: 0,
+
+        duration:
+          0.24,
+
+        ease:
+          "back.out(1.3)",
+
+        onUpdate:
+          updateSelection
+
+      }
+
+    );
+
+
+    showStatus(
+      `${product.name} kopiert`
+    );
+
+  }
+
+  catch (
+    error
+  ) {
+
+    console.error(
+      error
+    );
+
+
+    showStatus(
+
+      "Bauteil konnte nicht kopiert werden.",
+
+      true
+
+    );
+
+  }
+
+}
+
+
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
 
 function removeSelection() {
 
@@ -3975,6 +4361,13 @@ function setActiveObject(
     !activeObject
   ) {
 
+    objectToolbar
+      .classList
+      .remove(
+        "visible"
+      );
+
+
     return;
 
   }
@@ -4010,6 +4403,13 @@ function setActiveObject(
     selectionHelper
   );
 
+
+  objectToolbar
+    .classList
+    .add(
+      "visible"
+    );
+
 }
 
 
@@ -4027,6 +4427,384 @@ function updateSelection() {
 }
 
 
+
+/* ============================================================
+   TOOLBAR POSITION
+
+   Hier wird nicht einfach box.max.x verwendet.
+
+   Stattdessen werden alle 8 BoundingBox-Ecken
+   auf den Bildschirm projiziert.
+
+   Dadurch sitzt die Toolbar auch bei gedrehter Kamera
+   wirklich rechts neben dem Bauteil.
+   ============================================================ */
+
+function updateObjectToolbar() {
+
+  if (
+    !activeObject
+  ) {
+
+    objectToolbar
+      .classList
+      .remove(
+        "visible"
+      );
+
+
+    return;
+
+  }
+
+
+  const box =
+    new THREE.Box3()
+      .setFromObject(
+        activeObject
+      );
+
+
+  if (
+    box.isEmpty()
+  ) {
+
+    objectToolbar
+      .classList
+      .remove(
+        "visible"
+      );
+
+
+    return;
+
+  }
+
+
+  const corners = [
+
+    new THREE.Vector3(
+      box.min.x,
+      box.min.y,
+      box.min.z
+    ),
+
+    new THREE.Vector3(
+      box.min.x,
+      box.min.y,
+      box.max.z
+    ),
+
+    new THREE.Vector3(
+      box.min.x,
+      box.max.y,
+      box.min.z
+    ),
+
+    new THREE.Vector3(
+      box.min.x,
+      box.max.y,
+      box.max.z
+    ),
+
+    new THREE.Vector3(
+      box.max.x,
+      box.min.y,
+      box.min.z
+    ),
+
+    new THREE.Vector3(
+      box.max.x,
+      box.min.y,
+      box.max.z
+    ),
+
+    new THREE.Vector3(
+      box.max.x,
+      box.max.y,
+      box.min.z
+    ),
+
+    new THREE.Vector3(
+      box.max.x,
+      box.max.y,
+      box.max.z
+    )
+
+  ];
+
+
+  const width =
+    canvas.clientWidth;
+
+
+  const height =
+    canvas.clientHeight;
+
+
+  let minScreenX =
+    Infinity;
+
+
+  let maxScreenX =
+    -Infinity;
+
+
+  let minScreenY =
+    Infinity;
+
+
+  let maxScreenY =
+    -Infinity;
+
+
+  let visible =
+    false;
+
+
+  for (
+    const corner
+    of corners
+  ) {
+
+    const projected =
+      corner.clone()
+        .project(
+          camera
+        );
+
+
+    if (
+
+      projected.z >= -1
+
+      &&
+
+      projected.z <= 1
+
+    ) {
+
+      visible =
+        true;
+
+    }
+
+
+    const screenX =
+
+      (
+        projected.x *
+        0.5 +
+        0.5
+      )
+
+      *
+
+      width;
+
+
+    const screenY =
+
+      (
+        -projected.y *
+        0.5 +
+        0.5
+      )
+
+      *
+
+      height;
+
+
+    minScreenX =
+      Math.min(
+        minScreenX,
+        screenX
+      );
+
+
+    maxScreenX =
+      Math.max(
+        maxScreenX,
+        screenX
+      );
+
+
+    minScreenY =
+      Math.min(
+        minScreenY,
+        screenY
+      );
+
+
+    maxScreenY =
+      Math.max(
+        maxScreenY,
+        screenY
+      );
+
+  }
+
+
+  if (
+    !visible
+  ) {
+
+    objectToolbar
+      .classList
+      .remove(
+        "visible"
+      );
+
+
+    return;
+
+  }
+
+
+  const mobile =
+    window.innerWidth <=
+    850;
+
+
+  const buttonSize =
+    mobile
+      ? 50
+      : 44;
+
+
+  const gap =
+    mobile
+      ? 8
+      : 7;
+
+
+  const toolbarHeight =
+
+    buttonSize *
+    3
+
+    +
+
+    gap *
+    2;
+
+
+  let x =
+    maxScreenX +
+    12;
+
+
+  let y =
+
+    (
+      minScreenY +
+      maxScreenY
+    )
+
+    /
+
+    2
+
+    -
+
+    toolbarHeight /
+    2;
+
+
+  /*
+    Falls rechts nicht genug Platz ist,
+    Toolbar links vom Objekt darstellen.
+  */
+
+  if (
+
+    x +
+    buttonSize +
+    8
+
+    >
+
+    width
+
+  ) {
+
+    x =
+
+      minScreenX
+
+      -
+
+      buttonSize
+
+      -
+
+      12;
+
+  }
+
+
+  /*
+    Im sichtbaren Bereich halten.
+  */
+
+  x =
+    Math.max(
+
+      8,
+
+      Math.min(
+
+        x,
+
+        width -
+        buttonSize -
+        8
+
+      )
+
+    );
+
+
+  y =
+    Math.max(
+
+      8,
+
+      Math.min(
+
+        y,
+
+        height -
+        toolbarHeight -
+        8
+
+      )
+
+    );
+
+
+  objectToolbar.style.left =
+    `${x}px`;
+
+
+  objectToolbar.style.top =
+    `${y}px`;
+
+
+  objectToolbar
+    .classList
+    .add(
+      "visible"
+    );
+
+}
+
+
+
+/* ============================================================
+   SELECTABLE ROOT
+   ============================================================ */
 
 function findSelectableRoot(
   object
@@ -4068,9 +4846,8 @@ function findSelectableRoot(
 
 
 /* ============================================================
-   POINTER
+   POINTER POSITION
    ============================================================ */
-
 
 function updatePointer(
   event
@@ -4129,6 +4906,10 @@ function updatePointer(
 
 
 
+/* ============================================================
+   OBJECT UNDER POINTER
+   ============================================================ */
+
 function getObjectAtPointer() {
 
   raycaster.setFromCamera(
@@ -4182,7 +4963,6 @@ function getObjectAtPointer() {
    PLACEMENT MARKER
    ============================================================ */
 
-
 function removePlacementMarker() {
 
   if (
@@ -4232,6 +5012,10 @@ function removePlacementMarker() {
 
 
 
+/* ============================================================
+   MARKER
+   ============================================================ */
+
 function showPlacementMarker(
 
   object,
@@ -4273,8 +5057,10 @@ function showPlacementMarker(
 
 
     geometry.rotateX(
+
       -Math.PI /
       2
+
     );
 
 
@@ -4359,7 +5145,6 @@ function showPlacementMarker(
 /* ============================================================
    POINTER DOWN
    ============================================================ */
-
 
 canvas.addEventListener(
 
@@ -4485,10 +5270,6 @@ canvas.addEventListener(
     ) {}
 
 
-    canvas.style.cursor =
-      "grabbing";
-
-
     event.preventDefault();
 
   },
@@ -4502,7 +5283,6 @@ canvas.addEventListener(
 /* ============================================================
    POINTER MOVE
    ============================================================ */
-
 
 canvas.addEventListener(
 
@@ -4663,7 +5443,6 @@ canvas.addEventListener(
    POINTER UP
    ============================================================ */
 
-
 function finishDrag(
   event
 ) {
@@ -4758,8 +5537,7 @@ function finishDrag(
             gridX
           ),
 
-        y:
-          0,
+        y: 0,
 
         z:
           gridToWorld(
@@ -4791,8 +5569,7 @@ function finishDrag(
             originalGrid.x
           ),
 
-        y:
-          0,
+        y: 0,
 
         z:
           gridToWorld(
@@ -4857,24 +5634,14 @@ canvas.addEventListener(
 
 
 /* ============================================================
-   ROTATE
+   DREHEN
    ============================================================ */
-
 
 function rotateActivePart() {
 
   if (
     !activeObject
   ) {
-
-    showStatus(
-
-      "Bitte zuerst ein Bauteil auswählen.",
-
-      true
-
-    );
-
 
     return;
 
@@ -4967,24 +5734,14 @@ function rotateActivePart() {
 
 
 /* ============================================================
-   DELETE
+   LÖSCHEN
    ============================================================ */
-
 
 function deleteActivePart() {
 
   if (
     !activeObject
   ) {
-
-    showStatus(
-
-      "Bitte zuerst ein Bauteil auswählen.",
-
-      true
-
-    );
-
 
     return;
 
@@ -5044,9 +5801,8 @@ function deleteActivePart() {
 
 
 /* ============================================================
-   BOM
+   BOM COUNTS
    ============================================================ */
-
 
 function getBOMCounts() {
 
@@ -5092,104 +5848,22 @@ function getBOMCounts() {
 
 
 
-function createBOMText() {
+/* ============================================================
+   BOM UI
+   ============================================================ */
 
-  const counts =
-    getBOMCounts();
+function updateBOM() {
 
-
-  let total =
-    0;
-
-
-  let text =
-
-    "ModuDisplays Konfiguration\n" +
-
-    "==========================\n\n";
+  const container =
+    document.getElementById(
+      "bom-summary"
+    );
 
 
-  for (
-    const product
-    of products
-  ) {
-
-    const quantity =
-
-      counts.get(
-        product.id
-      )
-
-      ||
-
-      0;
-
-
-    if (
-      quantity === 0
-    ) {
-
-      continue;
-
-    }
-
-
-    const subtotal =
-
-      quantity *
-
-      product.price;
-
-
-    total +=
-      subtotal;
-
-
-    text +=
-
-      `${quantity}x ${product.name}\n`
-
-      +
-
-      `${formatPrice(subtotal)}\n\n`;
-
-  }
-
-
-  text +=
-
-    "--------------------------\n"
-
-    +
-
-    `Gesamtsumme: ${formatPrice(total)}`;
-
-
-  return text;
-
-}
-
-
-
-function fillBOMContainer(
-
-  container,
-
-  totalElement
-
-) {
-
-  if (
-    !container
-
-    ||
-
-    !totalElement
-  ) {
-
-    return;
-
-  }
+  const totalElement =
+    document.getElementById(
+      "total-price"
+    );
 
 
   container.innerHTML =
@@ -5272,6 +5946,7 @@ function fillBOMContainer(
         ${escapeHTML(product.name)}
       </span>
 
+
       <span class="bom-price">
         ${formatPrice(subtotal)}
       </span>
@@ -5295,32 +5970,84 @@ function fillBOMContainer(
 
 
 
-function updateBOM() {
+/* ============================================================
+   BOM TEXT
+   ============================================================ */
 
-  fillBOMContainer(
+function createBOMText() {
 
-    document.getElementById(
-      "bom-summary"
-    ),
-
-    document.getElementById(
-      "total-price"
-    )
-
-  );
+  const counts =
+    getBOMCounts();
 
 
-  fillBOMContainer(
+  let total =
+    0;
 
-    document.getElementById(
-      "mobile-bom-summary"
-    ),
 
-    document.getElementById(
-      "mobile-total-price"
-    )
+  let text =
 
-  );
+    "ModuDisplays Konfiguration\n" +
+
+    "==========================\n\n";
+
+
+  for (
+    const product
+    of products
+  ) {
+
+    const quantity =
+
+      counts.get(
+        product.id
+      )
+
+      ||
+
+      0;
+
+
+    if (
+      quantity === 0
+    ) {
+
+      continue;
+
+    }
+
+
+    const subtotal =
+
+      quantity *
+
+      product.price;
+
+
+    total +=
+      subtotal;
+
+
+    text +=
+
+      `${quantity}x ${product.name}\n`
+
+      +
+
+      `${formatPrice(subtotal)}\n\n`;
+
+  }
+
+
+  text +=
+
+    "--------------------------\n"
+
+    +
+
+    `Gesamtsumme: ${formatPrice(total)}`;
+
+
+  return text;
 
 }
 
@@ -5329,7 +6056,6 @@ function updateBOM() {
 /* ============================================================
    SCREENSHOT
    ============================================================ */
-
 
 function getConfiguratorImage(
 
@@ -5341,13 +6067,13 @@ function getConfiguratorImage(
 
 ) {
 
-  const selectionVisible =
+  const selectionWasVisible =
     selectionHelper
       ? selectionHelper.visible
       : false;
 
 
-  const markerVisible =
+  const markerWasVisible =
     placementMarker
       ? placementMarker.visible
       : false;
@@ -5397,7 +6123,7 @@ function getConfiguratorImage(
   ) {
 
     selectionHelper.visible =
-      selectionVisible;
+      selectionWasVisible;
 
   }
 
@@ -5407,7 +6133,7 @@ function getConfiguratorImage(
   ) {
 
     placementMarker.visible =
-      markerVisible;
+      markerWasVisible;
 
   }
 
@@ -5430,7 +6156,6 @@ function getConfiguratorImage(
 /* ============================================================
    PNG
    ============================================================ */
-
 
 function exportImage() {
 
@@ -5498,7 +6223,6 @@ function exportImage() {
 /* ============================================================
    PDF
    ============================================================ */
-
 
 function exportPDF() {
 
@@ -5957,9 +6681,8 @@ function exportPDF() {
 
 
 /* ============================================================
-   COPY BOM
+   BOM KOPIEREN
    ============================================================ */
-
 
 async function copyBOM() {
 
@@ -6053,7 +6776,6 @@ async function copyBOM() {
    EMAIL
    ============================================================ */
 
-
 function prepareEmail() {
 
   if (
@@ -6125,7 +6847,6 @@ function prepareEmail() {
 /* ============================================================
    RESET
    ============================================================ */
-
 
 function resetConfiguration() {
 
@@ -6208,9 +6929,8 @@ function resetConfiguration() {
 
 
 /* ============================================================
-   HELPERS
+   FORMAT
    ============================================================ */
-
 
 function formatPrice(
   value
@@ -6237,6 +6957,10 @@ function formatPrice(
 }
 
 
+
+/* ============================================================
+   HTML ESCAPE
+   ============================================================ */
 
 function escapeHTML(
   value
@@ -6274,6 +6998,10 @@ function escapeHTML(
 }
 
 
+
+/* ============================================================
+   STATUS
+   ============================================================ */
 
 function showStatus(
 
@@ -6334,7 +7062,6 @@ function showStatus(
 /* ============================================================
    KEYBOARD
    ============================================================ */
-
 
 window.addEventListener(
 
@@ -6398,6 +7125,22 @@ window.addEventListener(
 
     }
 
+
+    if (
+
+      event.key.toLowerCase() ===
+      "c"
+
+      &&
+
+      activeObject
+
+    ) {
+
+      copyActivePart();
+
+    }
+
   }
 
 );
@@ -6407,7 +7150,6 @@ window.addEventListener(
 /* ============================================================
    RESIZE
    ============================================================ */
-
 
 function resize() {
 
@@ -6421,13 +7163,11 @@ function resize() {
 
   if (
 
-    width ===
-    0
+    width === 0
 
     ||
 
-    height ===
-    0
+    height === 0
 
   ) {
 
@@ -6468,11 +7208,6 @@ window.addEventListener(
 
 
 
-/*
-  iOS Safari kann bei Adressleistenänderungen
-  viewport-Höhen neu berechnen.
-*/
-
 window.visualViewport
   ?.addEventListener(
 
@@ -6487,7 +7222,6 @@ window.visualViewport
 /* ============================================================
    RENDER LOOP
    ============================================================ */
-
 
 function animate() {
 
@@ -6530,6 +7264,9 @@ function animate() {
   updateSelection();
 
 
+  updateObjectToolbar();
+
+
   renderer.render(
 
     scene,
@@ -6545,7 +7282,6 @@ function animate() {
 /* ============================================================
    START
    ============================================================ */
-
 
 async function start() {
 
@@ -6565,7 +7301,6 @@ async function start() {
 
 
 start();
-
 
 </script>
 

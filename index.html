@@ -20,10 +20,6 @@
   </title>
 
 
-  <!-- =======================================================
-       EXTERNE BIBLIOTHEKEN
-       ======================================================= -->
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 
   <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
@@ -36,10 +32,6 @@
 
 
   <style>
-
-    /* =========================================================
-       BASIS
-       ========================================================= */
 
     * {
       box-sizing: border-box;
@@ -85,8 +77,9 @@
 
 
     /* =========================================================
-       3D VIEWPORT
+       VIEWPORT
        ========================================================= */
+
 
     #viewport {
       position: relative;
@@ -113,8 +106,9 @@
 
 
     /* =========================================================
-       DESKTOP HILFE
+       HELP
        ========================================================= */
+
 
     #help {
       position: absolute;
@@ -127,10 +121,10 @@
       padding: 10px 13px;
 
       background:
-        rgba(255, 255, 255, 0.94);
+        rgba(255,255,255,0.94);
 
       border:
-        1px solid rgba(0, 0, 0, 0.08);
+        1px solid rgba(0,0,0,0.08);
 
       border-radius: 8px;
 
@@ -148,8 +142,9 @@
 
 
     /* =========================================================
-       STATUS MELDUNG
+       STATUS
        ========================================================= */
+
 
     #status {
       position: absolute;
@@ -164,7 +159,7 @@
       padding: 9px 13px;
 
       background:
-        rgba(255, 255, 255, 0.97);
+        rgba(255,255,255,0.97);
 
       border:
         1px solid #dee2e6;
@@ -200,8 +195,9 @@
 
 
     /* =========================================================
-       OBJEKT TOOLBAR
+       OBJECT TOOLBAR
        ========================================================= */
+
 
     #object-toolbar {
       position: absolute;
@@ -257,17 +253,14 @@
 
 
     .object-tool:hover {
-      transform:
-        scale(1.08);
+      transform: scale(1.08);
 
-      filter:
-        brightness(1.08);
+      filter: brightness(1.08);
     }
 
 
     .object-tool:active {
-      transform:
-        scale(0.94);
+      transform: scale(0.94);
     }
 
 
@@ -288,8 +281,9 @@
 
 
     /* =========================================================
-       SIDEBAR DESKTOP
+       SIDEBAR
        ========================================================= */
+
 
     #sidebar {
       position: relative;
@@ -348,15 +342,9 @@
 
       overflow-y: auto;
 
-      overscroll-behavior:
-        contain;
+      overscroll-behavior: contain;
     }
 
-
-
-    /* =========================================================
-       SIDEBAR PANEL
-       ========================================================= */
 
     .sidebar-panel {
       padding: 20px;
@@ -388,8 +376,110 @@
 
 
     /* =========================================================
-       PRODUKTE
+       GROUPS
        ========================================================= */
+
+
+    .desktop-product-group {
+      margin-bottom: 24px;
+    }
+
+
+    .desktop-product-group:last-child {
+      margin-bottom: 0;
+    }
+
+
+    .product-group-heading {
+      display: flex;
+
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 10px;
+
+      margin:
+        0 0 10px;
+
+      padding-bottom: 8px;
+
+      border-bottom:
+        1px solid #eceff2;
+    }
+
+
+    .product-group-heading strong {
+      color: #212529;
+
+      font-size: 14px;
+    }
+
+
+    .product-group-count {
+      flex: 0 0 auto;
+
+      padding:
+        3px 7px;
+
+      background: #f1f3f5;
+
+      border-radius: 999px;
+
+      color: #6c757d;
+
+      font-size: 10px;
+      font-weight: 700;
+    }
+
+
+
+    /* =========================================================
+       MOBILE GROUP SELECTOR
+       ========================================================= */
+
+
+    #mobile-group-selector {
+      display: none;
+    }
+
+
+    .mobile-group-button {
+      min-height: 46px;
+
+      padding:
+        8px 10px;
+
+      background: #f1f3f5;
+
+      border: 1px solid #e1e5e9;
+
+      border-radius: 8px;
+
+      color: #495057;
+
+      cursor: pointer;
+
+      font-size: 12px;
+      font-weight: 700;
+
+      text-align: center;
+    }
+
+
+    .mobile-group-button.active {
+      background: #111111;
+
+      border-color: #111111;
+
+      color: #ffffff;
+    }
+
+
+
+    /* =========================================================
+       PRODUCT CARDS
+       ========================================================= */
+
 
     .item-card {
       display: grid;
@@ -510,10 +600,34 @@
     }
 
 
+    .free-placement-badge {
+      display: inline-block;
+
+      margin-top: 5px;
+
+      padding:
+        3px 6px;
+
+      background: #e8f5e9;
+
+      border-radius: 4px;
+
+      color: #2e7d32;
+
+      font-size: 9px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.35px;
+    }
+
+
     .btn-add {
       min-height: 38px;
 
-      padding: 8px 9px;
+      padding:
+        8px 9px;
 
       background: #111111;
 
@@ -542,6 +656,7 @@
        BOM
        ========================================================= */
 
+
     .bom-list {
       max-height: 180px;
 
@@ -559,6 +674,26 @@
       border-radius: 6px;
 
       font-size: 12px;
+    }
+
+
+    .bom-group-title {
+      margin:
+        10px 0 7px;
+
+      color: #6c757d;
+
+      font-size: 10px;
+      font-weight: 800;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.6px;
+    }
+
+
+    .bom-group-title:first-child {
+      margin-top: 0;
     }
 
 
@@ -615,6 +750,7 @@
     /* =========================================================
        EXPORT
        ========================================================= */
+
 
     .export-grid {
       display: grid;
@@ -676,11 +812,6 @@
     }
 
 
-    .btn-email:hover {
-      background: #333333;
-    }
-
-
     .btn-reset {
       width: 100%;
 
@@ -705,17 +836,11 @@
     }
 
 
-    .btn-reset:hover {
-      background: #dc3545;
-
-      color: #ffffff;
-    }
-
-
 
     /* =========================================================
        MOBILE NAVIGATION
        ========================================================= */
+
 
     #mobile-menu-button {
       display: none;
@@ -739,8 +864,9 @@
 
 
     /* =========================================================
-       BETA MODAL
+       BETA
        ========================================================= */
+
 
     .beta-modal {
       position: fixed;
@@ -775,7 +901,7 @@
 
     .beta-box {
       width:
-        min(650px, 100%);
+        min(650px,100%);
 
       max-height:
         90dvh;
@@ -796,7 +922,8 @@
     .beta-badge {
       display: inline-block;
 
-      padding: 5px 9px;
+      padding:
+        5px 9px;
 
       background: #ffb703;
 
@@ -863,6 +990,7 @@
        SMARTPHONE
        ========================================================= */
 
+
     @media (max-width: 850px) {
 
 
@@ -886,9 +1014,8 @@
 
 
 
-      /* -------------------------------------------------------
-         MENU BUTTON
-         ------------------------------------------------------- */
+      /* MENU */
+
 
       #mobile-menu-button {
         position: absolute;
@@ -935,9 +1062,8 @@
 
 
 
-      /* -------------------------------------------------------
-         OVERLAY
-         ------------------------------------------------------- */
+      /* OVERLAY */
+
 
       #mobile-overlay {
         position: fixed;
@@ -969,9 +1095,8 @@
 
 
 
-      /* -------------------------------------------------------
-         DRAWER
-         ------------------------------------------------------- */
+      /* DRAWER */
+
 
       #sidebar {
         position: fixed;
@@ -982,7 +1107,7 @@
         z-index: 2000;
 
         width:
-          min(94vw, 410px);
+          min(94vw,410px);
 
         height: 100dvh;
 
@@ -1010,9 +1135,8 @@
 
 
 
-      /* -------------------------------------------------------
-         MOBILE HEADER
-         ------------------------------------------------------- */
+      /* MOBILE TOP */
+
 
       .mobile-sidebar-top {
         display: flex;
@@ -1024,7 +1148,8 @@
 
         min-height: 58px;
 
-        padding: 10px 14px;
+        padding:
+          10px 14px;
 
         border-bottom:
           1px solid #eeeeee;
@@ -1078,9 +1203,8 @@
 
 
 
-      /* -------------------------------------------------------
-         MOBILE TABS
-         ------------------------------------------------------- */
+      /* MAIN TABS */
+
 
       .mobile-tabs {
         display: grid;
@@ -1106,7 +1230,8 @@
       .mobile-tab {
         min-height: 44px;
 
-        padding: 7px 5px;
+        padding:
+          7px 5px;
 
         background: transparent;
 
@@ -1131,9 +1256,8 @@
 
 
 
-      /* -------------------------------------------------------
-         PANELS MOBILE
-         ------------------------------------------------------- */
+      /* PANELS */
+
 
       .sidebar-content {
         flex: 1;
@@ -1147,7 +1271,7 @@
       .sidebar-panel {
         display: none;
 
-        padding: 14px;
+        padding: 12px;
 
         border: 0;
       }
@@ -1164,14 +1288,47 @@
 
 
 
-      /* -------------------------------------------------------
-         PRODUCT CARDS MOBILE
-         ------------------------------------------------------- */
+      /* MOBILE GROUPS */
+
+
+      #mobile-group-selector {
+        display: grid;
+
+        grid-template-columns:
+          1fr
+          1fr;
+
+        gap: 7px;
+
+        margin-bottom: 12px;
+      }
+
+
+      .desktop-product-group {
+        display: none;
+      }
+
+
+      .desktop-product-group.mobile-active-group {
+        display: block;
+
+        margin-bottom: 0;
+      }
+
+
+      .product-group-heading {
+        display: none;
+      }
+
+
+
+      /* CARDS */
+
 
       .item-card {
         grid-template-columns:
           78px
-          minmax(0, 1fr);
+          minmax(0,1fr);
 
         gap: 10px;
 
@@ -1197,9 +1354,8 @@
 
 
 
-      /* -------------------------------------------------------
-         BOM MOBILE
-         ------------------------------------------------------- */
+      /* BOM */
+
 
       .bom-list {
         max-height: none;
@@ -1207,12 +1363,12 @@
 
 
 
-      /* -------------------------------------------------------
-         EXPORT MOBILE
-         ------------------------------------------------------- */
+      /* EXPORT */
+
 
       .export-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns:
+          1fr;
       }
 
 
@@ -1222,9 +1378,8 @@
 
 
 
-      /* -------------------------------------------------------
-         OBJECT TOOLBAR MOBILE
-         ------------------------------------------------------- */
+      /* OBJECT TOOLBAR */
+
 
       .object-tool {
         width: 50px;
@@ -1240,9 +1395,8 @@
 
 
 
-      /* -------------------------------------------------------
-         STATUS MOBILE
-         ------------------------------------------------------- */
+      /* STATUS */
+
 
       #status {
         left: 12px;
@@ -1260,9 +1414,8 @@
 
 
 
-      /* -------------------------------------------------------
-         BETA
-         ------------------------------------------------------- */
+      /* BETA */
+
 
       .beta-box {
         padding: 22px;
@@ -1283,9 +1436,11 @@
 <body>
 
 
+
 <!-- =========================================================
-     BETA HINWEIS
+     BETA
      ========================================================= -->
+
 
 <div
   id="beta-modal"
@@ -1293,6 +1448,7 @@
 >
 
   <div class="beta-box">
+
 
     <div class="beta-badge">
       BETA
@@ -1339,6 +1495,13 @@
 
 
     <p>
+      Zubehör aus der Kategorie
+      <strong>Sonstiges Zubehör</strong>
+      kann frei auf Ihrer Diorama-Fläche positioniert werden.
+    </p>
+
+
+    <p>
       Vielen Dank für Ihr Verständnis.
       Wir wünschen Ihnen viel Freude beim Planen und Bauen Ihrer
       eigenen ModuDisplays-Welt!
@@ -1360,6 +1523,7 @@
       Konfigurator starten
     </button>
 
+
   </div>
 
 </div>
@@ -1369,6 +1533,7 @@
 <!-- =========================================================
      VIEWPORT
      ========================================================= -->
+
 
 <div id="viewport">
 
@@ -1384,17 +1549,17 @@
 
     <br>
 
+    Garage:
+    60-mm-Raster
+
+    <br>
+
+    Zubehör:
+    frei platzierbar
+
+    <br>
+
     Bauteil anklicken &amp; ziehen
-
-    <br>
-
-    Leerer Bereich:
-    Kamera drehen
-
-    <br>
-
-    Mausrad:
-    Zoomen
 
     <br>
 
@@ -1414,14 +1579,12 @@
   </div>
 
 
-
   <div id="status"></div>
 
 
 
-  <!-- =======================================================
-       OBJEKT BUTTONS
-       ======================================================= -->
+  <!-- OBJECT TOOLBAR -->
+
 
   <div id="object-toolbar">
 
@@ -1463,9 +1626,8 @@
 
 
 
-  <!-- =======================================================
-       MOBILE MENU
-       ======================================================= -->
+  <!-- MOBILE MENU -->
+
 
   <button
     id="mobile-menu-button"
@@ -1485,6 +1647,7 @@
      MOBILE OVERLAY
      ========================================================= -->
 
+
 <div
   id="mobile-overlay"
   onclick="closeMobileMenu()"
@@ -1496,10 +1659,9 @@
      SIDEBAR
      ========================================================= -->
 
+
 <aside id="sidebar">
 
-
-  <!-- MOBILE TOP -->
 
   <div class="mobile-sidebar-top">
 
@@ -1511,8 +1673,8 @@
     <button
       class="mobile-close-button"
       type="button"
-      aria-label="Menü schließen"
       onclick="closeMobileMenu()"
+      aria-label="Menü schließen"
     >
       ×
     </button>
@@ -1520,8 +1682,6 @@
   </div>
 
 
-
-  <!-- HEADER -->
 
   <div class="sidebar-header">
 
@@ -1537,7 +1697,8 @@
 
 
 
-  <!-- MOBILE TABS -->
+  <!-- MOBILE MAIN TABS -->
+
 
   <div class="mobile-tabs">
 
@@ -1576,43 +1737,54 @@
 
 
 
-  <!-- =======================================================
-       SIDEBAR CONTENT
-       ======================================================= -->
-
   <div class="sidebar-content">
 
 
+
     <!-- =====================================================
-         PRODUKTE
+         PRODUCTS
          ===================================================== -->
+
 
     <section
       id="panel-products"
       class="sidebar-panel active"
     >
 
+
       <div class="section-title">
         Verfügbare Artikel
       </div>
+
+
+      <!-- Smartphone-Untergruppen -->
+
+
+      <div id="mobile-group-selector"></div>
+
+
+      <!-- Desktop + Mobile nutzen dieselben Gruppen -->
 
 
       <div id="product-list">
         Artikel werden geladen …
       </div>
 
+
     </section>
 
 
 
     <!-- =====================================================
-         STÜCKLISTE
+         BOM
          ===================================================== -->
+
 
     <section
       id="panel-bom"
       class="sidebar-panel"
     >
+
 
       <div class="section-title">
         Stückliste
@@ -1637,6 +1809,7 @@
 
       </div>
 
+
     </section>
 
 
@@ -1645,10 +1818,12 @@
          EXPORT
          ===================================================== -->
 
+
     <section
       id="panel-export"
       class="sidebar-panel"
     >
+
 
       <div class="section-title">
         Export &amp; Anfrage
@@ -1727,9 +1902,11 @@
 
 <script>
 
+
 /* ============================================================
    STATE
    ============================================================ */
+
 
 let CELL_SIZE =
   0.06;
@@ -1739,8 +1916,20 @@ let products =
   [];
 
 
+let groups =
+  [];
+
+
 let productMap =
   new Map();
+
+
+let groupMap =
+  new Map();
+
+
+let activeMobileGroup =
+  null;
 
 
 const occupancy =
@@ -1784,6 +1973,7 @@ let statusTimeout =
    DOM
    ============================================================ */
 
+
 const canvas =
   document.getElementById(
     "canvas3d"
@@ -1804,8 +1994,9 @@ const objectToolbar =
 
 
 /* ============================================================
-   THREE.JS
+   THREE
    ============================================================ */
+
 
 const scene =
   new THREE.Scene();
@@ -1900,6 +2091,7 @@ renderer.outputEncoding =
    CONTROLS
    ============================================================ */
 
+
 const controls =
   new THREE.OrbitControls(
 
@@ -1946,6 +2138,7 @@ controls.maxPolarAngle =
 /* ============================================================
    LIGHT
    ============================================================ */
+
 
 scene.add(
 
@@ -1997,6 +2190,7 @@ scene.add(
 /* ============================================================
    GRID
    ============================================================ */
+
 
 const gridGeometry =
   new THREE.PlaneGeometry(
@@ -2251,6 +2445,7 @@ scene.add(
    INTERACTION
    ============================================================ */
 
+
 const raycaster =
   new THREE.Raycaster();
 
@@ -2294,14 +2489,89 @@ const originalGrid = {
 };
 
 
+const originalPosition =
+  new THREE.Vector3();
+
+
 const loader =
   new THREE.GLTFLoader();
 
 
 
 /* ============================================================
-   MOBILE SIDEBAR
+   GENERAL PRODUCT HELPERS
    ============================================================ */
+
+
+function getProductForObject(
+  object
+) {
+
+  if (
+    !object
+  ) {
+
+    return null;
+
+  }
+
+
+  return productMap.get(
+    object.userData.productId
+  );
+
+}
+
+
+
+function isFreeProduct(
+  product
+) {
+
+  return (
+    product &&
+    product.placement ===
+    "free"
+  );
+
+}
+
+
+
+function getProductHeight(
+  product
+) {
+
+  if (
+    !product
+  ) {
+
+    return 0;
+
+  }
+
+
+  return (
+
+    Number(
+      product.heightMM ||
+      0
+    )
+
+    /
+
+    1000
+
+  );
+
+}
+
+
+
+/* ============================================================
+   MOBILE DRAWER
+   ============================================================ */
+
 
 function openMobileMenu() {
 
@@ -2354,8 +2624,9 @@ function closeMobileMenu() {
 
 
 /* ============================================================
-   MOBILE PANELS
+   MOBILE MAIN PANEL
    ============================================================ */
+
 
 function showMobilePanel(
   name
@@ -2378,21 +2649,14 @@ function showMobilePanel(
     );
 
 
-  const target =
-    document.getElementById(
+  document
+    .getElementById(
       `panel-${name}`
-    );
-
-
-  if (
-    target
-  ) {
-
-    target.classList.add(
+    )
+    ?.classList
+    .add(
       "active"
     );
-
-  }
 
 
   document
@@ -2421,8 +2685,69 @@ function showMobilePanel(
 
 
 /* ============================================================
+   MOBILE PRODUCT GROUP
+   ============================================================ */
+
+
+function showMobileProductGroup(
+  groupId
+) {
+
+  activeMobileGroup =
+    groupId;
+
+
+  document
+    .querySelectorAll(
+      ".desktop-product-group"
+    )
+    .forEach(
+
+      section => {
+
+        section.classList.toggle(
+
+          "mobile-active-group",
+
+          section.dataset.group ===
+          groupId
+
+        );
+
+      }
+
+    );
+
+
+  document
+    .querySelectorAll(
+      ".mobile-group-button"
+    )
+    .forEach(
+
+      button => {
+
+        button.classList.toggle(
+
+          "active",
+
+          button.dataset.group ===
+          groupId
+
+        );
+
+      }
+
+    );
+
+}
+
+
+
+/* ============================================================
    BETA
    ============================================================ */
+
 
 function closeBetaModal() {
 
@@ -2458,8 +2783,9 @@ function showBetaModal() {
 
 
 /* ============================================================
-   BOM.JSON LADEN
+   LOAD BOM
    ============================================================ */
+
 
 async function loadBOM() {
 
@@ -2498,6 +2824,16 @@ async function loadBOM() {
       1000;
 
 
+    groups =
+      Array.isArray(
+        data.groups
+      )
+
+        ? data.groups
+
+        : [];
+
+
     products =
 
       (
@@ -2512,6 +2848,77 @@ async function loadBOM() {
           false
 
       );
+
+
+    /*
+      Rückwärtskompatibilität:
+      alte BOM ohne group/placement funktioniert weiter.
+    */
+
+    for (
+      const product
+      of products
+    ) {
+
+      if (
+        !product.group
+      ) {
+
+        product.group =
+          "garage";
+
+      }
+
+
+      if (
+        !product.placement
+      ) {
+
+        product.placement =
+          "grid";
+
+      }
+
+    }
+
+
+    /*
+      Falls groups nicht definiert:
+      automatisch aus Produkten erzeugen.
+    */
+
+    if (
+      groups.length === 0
+    ) {
+
+      const ids =
+        [
+          ...new Set(
+
+            products.map(
+              product =>
+                product.group
+            )
+
+          )
+        ];
+
+
+      groups =
+        ids.map(
+
+          id => ({
+
+            id,
+
+            name:
+              id
+
+          })
+
+        );
+
+    }
 
 
     productMap =
@@ -2532,6 +2939,29 @@ async function loadBOM() {
       );
 
 
+    groupMap =
+      new Map(
+
+        groups.map(
+
+          group => [
+
+            group.id,
+
+            group
+
+          ]
+
+        )
+
+      );
+
+
+    activeMobileGroup =
+      groups[0]?.id ||
+      null;
+
+
     gridMaterial
       .uniforms
       .cellSize
@@ -2549,6 +2979,9 @@ async function loadBOM() {
 
 
     renderProductList();
+
+
+    renderMobileGroupSelector();
 
 
     updateBOM();
@@ -2579,8 +3012,267 @@ async function loadBOM() {
 
 
 /* ============================================================
-   PRODUKTLISTE
+   MOBILE GROUP BUTTONS
    ============================================================ */
+
+
+function renderMobileGroupSelector() {
+
+  const container =
+    document.getElementById(
+      "mobile-group-selector"
+    );
+
+
+  container.innerHTML =
+    "";
+
+
+  for (
+    const group
+    of groups
+  ) {
+
+    const button =
+      document.createElement(
+        "button"
+      );
+
+
+    button.type =
+      "button";
+
+
+    button.className =
+      "mobile-group-button";
+
+
+    button.dataset.group =
+      group.id;
+
+
+    button.textContent =
+      group.name;
+
+
+    button.addEventListener(
+
+      "click",
+
+      () => {
+
+        showMobileProductGroup(
+          group.id
+        );
+
+      }
+
+    );
+
+
+    container.appendChild(
+      button
+    );
+
+  }
+
+
+  if (
+    activeMobileGroup
+  ) {
+
+    showMobileProductGroup(
+      activeMobileGroup
+    );
+
+  }
+
+}
+
+
+
+/* ============================================================
+   PRODUCT CARD
+   ============================================================ */
+
+
+function createProductCard(
+  product
+) {
+
+  const card =
+    document.createElement(
+      "div"
+    );
+
+
+  card.className =
+    "item-card";
+
+
+  const imageName =
+    product.image ||
+    "";
+
+
+  const meta =
+
+    isFreeProduct(
+      product
+    )
+
+      ? "Frei platzierbares Zubehör"
+
+      : `${product.cellsX} × ${product.cellsZ} Rasterfelder`;
+
+
+  const freeBadge =
+
+    isFreeProduct(
+      product
+    )
+
+      ? `<span class="free-placement-badge">
+           Frei platzierbar
+         </span>`
+
+      : "";
+
+
+  card.innerHTML = `
+
+    <div class="item-image-wrap">
+
+      <img
+        class="item-image"
+        src="./images/${escapeHTML(imageName)}"
+        alt="${escapeHTML(product.name)}"
+        loading="lazy"
+      >
+
+    </div>
+
+
+    <div class="item-info">
+
+      <span class="item-name">
+        ${escapeHTML(product.name)}
+      </span>
+
+
+      <span class="item-meta">
+        ${escapeHTML(meta)}
+      </span>
+
+
+      ${freeBadge}
+
+
+      <span class="item-price">
+        ${formatPrice(product.price)}
+      </span>
+
+    </div>
+
+
+    <button
+      class="btn-add"
+      type="button"
+    >
+      + Hinzufügen
+    </button>
+
+  `;
+
+
+  card
+    .querySelector(
+      ".btn-add"
+    )
+    .addEventListener(
+
+      "click",
+
+      async () => {
+
+        await addPart(
+          product.id
+        );
+
+
+        if (
+          window.innerWidth <=
+          850
+        ) {
+
+          closeMobileMenu();
+
+        }
+
+      }
+
+    );
+
+
+  const image =
+    card.querySelector(
+      ".item-image"
+    );
+
+
+  const imageWrap =
+    card.querySelector(
+      ".item-image-wrap"
+    );
+
+
+  if (
+    !imageName
+  ) {
+
+    image.style.display =
+      "none";
+
+
+    imageWrap.classList.add(
+      "image-missing"
+    );
+
+  }
+
+  else {
+
+    image.addEventListener(
+
+      "error",
+
+      () => {
+
+        image.style.display =
+          "none";
+
+
+        imageWrap.classList.add(
+          "image-missing"
+        );
+
+      }
+
+    );
+
+  }
+
+
+  return card;
+
+}
+
+
+
+/* ============================================================
+   PRODUCT LIST BY GROUP
+   ============================================================ */
+
 
 function renderProductList() {
 
@@ -2595,151 +3287,81 @@ function renderProductList() {
 
 
   for (
-    const product
-    of products
+    const group
+    of groups
   ) {
 
-    const card =
+    const groupProducts =
+      products.filter(
+
+        product =>
+          product.group ===
+          group.id
+
+      );
+
+
+    if (
+      groupProducts.length === 0
+    ) {
+
+      continue;
+
+    }
+
+
+    const section =
       document.createElement(
         "div"
       );
 
 
-    card.className =
-      "item-card";
+    section.className =
+      "desktop-product-group";
 
 
-    const imageName =
-      product.image ||
-      "";
+    section.dataset.group =
+      group.id;
 
 
-    card.innerHTML = `
-
-      <div class="item-image-wrap">
-
-        <img
-          class="item-image"
-          src="./images/${escapeHTML(imageName)}"
-          alt="${escapeHTML(product.name)}"
-          loading="lazy"
-        >
-
-      </div>
+    const heading =
+      document.createElement(
+        "div"
+      );
 
 
-      <div class="item-info">
-
-        <span class="item-name">
-          ${escapeHTML(product.name)}
-        </span>
+    heading.className =
+      "product-group-heading";
 
 
-        <span class="item-meta">
-          ${product.cellsX} × ${product.cellsZ}
-          Rasterfelder
-        </span>
+    heading.innerHTML = `
 
+      <strong>
+        ${escapeHTML(group.name)}
+      </strong>
 
-        <span class="item-price">
-          ${formatPrice(product.price)}
-        </span>
-
-      </div>
-
-
-      <button
-        class="btn-add"
-        type="button"
-      >
-        + Hinzufügen
-      </button>
+      <span class="product-group-count">
+        ${groupProducts.length}
+      </span>
 
     `;
 
 
-    card
-      .querySelector(
-        ".btn-add"
-      )
-      .addEventListener(
-
-        "click",
-
-        async () => {
-
-          await addPart(
-            product.id
-          );
+    section.appendChild(
+      heading
+    );
 
 
-          /*
-            Smartphone:
-            nach dem Hinzufügen Drawer schließen,
-            damit das Bauteil direkt sichtbar ist.
-          */
-
-          if (
-            window.innerWidth <=
-            850
-          ) {
-
-            closeMobileMenu();
-
-          }
-
-        }
-
-      );
-
-
-    const image =
-      card.querySelector(
-        ".item-image"
-      );
-
-
-    const imageWrap =
-      card.querySelector(
-        ".item-image-wrap"
-      );
-
-
-    if (
-      !imageName
+    for (
+      const product
+      of groupProducts
     ) {
 
-      image.style.display =
-        "none";
+      section.appendChild(
 
-
-      imageWrap
-        .classList
-        .add(
-          "image-missing"
-        );
-
-    }
-
-    else {
-
-      image.addEventListener(
-
-        "error",
-
-        () => {
-
-          image.style.display =
-            "none";
-
-
-          imageWrap
-            .classList
-            .add(
-              "image-missing"
-            );
-
-        }
+        createProductCard(
+          product
+        )
 
       );
 
@@ -2747,7 +3369,18 @@ function renderProductList() {
 
 
     container.appendChild(
-      card
+      section
+    );
+
+  }
+
+
+  if (
+    activeMobileGroup
+  ) {
+
+    showMobileProductGroup(
+      activeMobileGroup
     );
 
   }
@@ -2757,8 +3390,9 @@ function renderProductList() {
 
 
 /* ============================================================
-   GRID
+   GRID HELPERS
    ============================================================ */
+
 
 function gridToWorld(
   value
@@ -2803,6 +3437,7 @@ function cellKey(
    ROTATION
    ============================================================ */
 
+
 function getRotationSteps(
   object
 ) {
@@ -2825,6 +3460,7 @@ function getRotationSteps(
 /* ============================================================
    COLLISION ROTATION
    ============================================================ */
+
 
 function getCollisionRotationSteps(
   product
@@ -2869,6 +3505,7 @@ function getCollisionRotationSteps(
 /* ============================================================
    CELL ROTATION
    ============================================================ */
+
 
 function rotateCell(
 
@@ -2943,8 +3580,9 @@ function rotateCell(
 
 
 /* ============================================================
-   BASIS KOLLISIONSFELDER
+   BASE OCCUPIED CELLS
    ============================================================ */
+
 
 function getBaseOccupiedCells(
   product
@@ -2994,7 +3632,7 @@ function getBaseOccupiedCells(
     ) {
 
       cells.push(
-        [x, z]
+        [x,z]
       );
 
     }
@@ -3009,17 +3647,33 @@ function getBaseOccupiedCells(
 
 
 /* ============================================================
-   ROTIERTE KOLLISIONSFELDER
+   ROTATED OCCUPIED CELLS
    ============================================================ */
+
 
 function getRotatedLocalCells(
   object
 ) {
 
   const product =
-    productMap.get(
-      object.userData.productId
+    getProductForObject(
+      object
     );
+
+
+  /*
+    Freie Objekte besitzen keine Raster-Kollisionszellen.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    return [];
+
+  }
 
 
   const correctionSteps =
@@ -3034,7 +3688,7 @@ function getRotatedLocalCells(
     )
     .map(
 
-      ([x, z]) =>
+      ([x,z]) =>
 
         rotateCell(
 
@@ -3055,13 +3709,11 @@ function getRotatedLocalCells(
 
   const correctionQuarterTurn =
 
-    correctionSteps ===
-    1
+    correctionSteps === 1
 
     ||
 
-    correctionSteps ===
-    3;
+    correctionSteps === 3;
 
 
   const correctedCellsX =
@@ -3088,37 +3740,34 @@ function getRotatedLocalCells(
     );
 
 
-  cells =
-    cells.map(
+  return cells.map(
 
-      ([x, z]) =>
+    ([x,z]) =>
 
-        rotateCell(
+      rotateCell(
 
-          x,
+        x,
 
-          z,
+        z,
 
-          correctedCellsX,
+        correctedCellsX,
 
-          correctedCellsZ,
+        correctedCellsZ,
 
-          objectSteps
+        objectSteps
 
-        )
+      )
 
-    );
-
-
-  return cells;
+  );
 
 }
 
 
 
 /* ============================================================
-   WELT KOLLISIONSFELDER
+   WORLD OCCUPIED CELLS
    ============================================================ */
+
 
 function getOccupiedCells(
 
@@ -3135,7 +3784,7 @@ function getOccupiedCells(
   )
   .map(
 
-    ([x, z]) => ({
+    ([x,z]) => ({
 
       x:
         gridX +
@@ -3154,8 +3803,9 @@ function getOccupiedCells(
 
 
 /* ============================================================
-   KOLLISION
+   COLLISION
    ============================================================ */
+
 
 function canPlaceObject(
 
@@ -3166,6 +3816,31 @@ function canPlaceObject(
   gridZ
 
 ) {
+
+  const product =
+    getProductForObject(
+      object
+    );
+
+
+  /*
+    Freies Zubehör kollidiert bewusst NICHT
+    mit der Rasterbelegung.
+
+    Dadurch kann es auf Fliesen,
+    Startersets usw. gestellt werden.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    return true;
+
+  }
+
 
   for (
     const cell
@@ -3222,6 +3897,7 @@ function canPlaceObject(
    OCCUPANCY CLEAR
    ============================================================ */
 
+
 function clearOccupancy(
   object
 ) {
@@ -3272,6 +3948,7 @@ function clearOccupancy(
    OCCUPANCY SET
    ============================================================ */
 
+
 function occupyObject(
 
   object,
@@ -3282,9 +3959,30 @@ function occupyObject(
 
 ) {
 
+  const product =
+    getProductForObject(
+      object
+    );
+
+
   clearOccupancy(
     object
   );
+
+
+  /*
+    Zubehör belegt keine Rasterzellen.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    return;
+
+  }
 
 
   for (
@@ -3329,8 +4027,9 @@ function occupyObject(
 
 
 /* ============================================================
-   FREIEN PLATZ SUCHEN
+   FIND FREE GRID POSITION
    ============================================================ */
+
 
 function findFreePosition(
   object
@@ -3420,8 +4119,62 @@ function findFreePosition(
 
 
 /* ============================================================
-   GLTF LOAD
+   FREE DEFAULT POSITION
    ============================================================ */
+
+
+function findFreeAccessoryStartPosition() {
+
+  /*
+    Zubehör startet nahe dem Kameraziel,
+    leicht versetzt, damit mehrere Teile
+    nicht exakt übereinander erscheinen.
+  */
+
+
+  const freeObjects =
+    placedObjects.filter(
+
+      object =>
+
+        isFreeProduct(
+
+          getProductForObject(
+            object
+          )
+
+        )
+
+    );
+
+
+  const offset =
+    freeObjects.length *
+    0.018;
+
+
+  return {
+
+    x:
+      controls.target.x +
+      0.02 +
+      offset,
+
+    z:
+      controls.target.z +
+      0.02 +
+      offset
+
+  };
+
+}
+
+
+
+/* ============================================================
+   GLTF
+   ============================================================ */
+
 
 function loadModel(
   product
@@ -3485,8 +4238,9 @@ function loadModel(
 
 
 /* ============================================================
-   MODEL PREPARE
+   MODEL MATERIAL
    ============================================================ */
+
 
 function prepareModel(
   model
@@ -3550,8 +4304,9 @@ function prepareModel(
 
 
 /* ============================================================
-   MODELL URSPRUNG NORMALISIEREN
+   NORMALIZE ORIGIN
    ============================================================ */
+
 
 function normalizeModelOrigin(
   object
@@ -3561,12 +4316,11 @@ function normalizeModelOrigin(
     object.userData.modelRoot;
 
 
-  model.position.x =
-    0;
-
-
-  model.position.z =
-    0;
+  model.position.set(
+    0,
+    0,
+    0
+  );
 
 
   model.updateMatrixWorld(
@@ -3581,8 +4335,19 @@ function normalizeModelOrigin(
       );
 
 
+  /*
+    Vorn/links UND Unterkante auf 0.
+
+    Damit bedeutet object.position.y
+    wirklich die Unterseite des Artikels.
+  */
+
   model.position.x =
     -box.min.x;
+
+
+  model.position.y =
+    -box.min.y;
 
 
   model.position.z =
@@ -3614,6 +4379,10 @@ function normalizeModelOrigin(
     size.x;
 
 
+  object.userData.modelHeight =
+    size.y;
+
+
   object.userData.modelDepth =
     size.z;
 
@@ -3622,8 +4391,9 @@ function normalizeModelOrigin(
 
 
 /* ============================================================
-   VISUELLE ROTATION
+   VISUAL ROTATION
    ============================================================ */
+
 
 function applyRotation(
 
@@ -3774,8 +4544,9 @@ function applyRotation(
 
 
 /* ============================================================
-   OBJEKT ERZEUGEN
+   CREATE OBJECT
    ============================================================ */
+
 
 async function createObjectFromProduct(
 
@@ -3852,6 +4623,9 @@ async function createObjectFromProduct(
     modelWidth:
       0,
 
+    modelHeight:
+      0,
+
     modelDepth:
       0
 
@@ -3879,8 +4653,9 @@ async function createObjectFromProduct(
 
 
 /* ============================================================
-   PRODUKT HINZUFÜGEN
+   ADD PART
    ============================================================ */
+
 
 async function addPart(
   productId
@@ -3923,71 +4698,139 @@ async function addPart(
     );
 
 
-    const free =
-      findFreePosition(
+    if (
+      isFreeProduct(
+        product
+      )
+    ) {
+
+      const start =
+        findFreeAccessoryStartPosition();
+
+
+      wrapper.position.set(
+
+        start.x,
+
+        getProductHeight(
+          product
+        )
+        +
+        0.02,
+
+        start.z
+
+      );
+
+
+      placedObjects.push(
         wrapper
       );
 
 
-    wrapper.position.set(
+      setActiveObject(
+        wrapper
+      );
 
-      gridToWorld(
-        free.x
-      ),
 
-      0.025,
+      updateBOM();
 
-      gridToWorld(
+
+      gsap.to(
+
+        wrapper.position,
+
+        {
+
+          y:
+            getProductHeight(
+              product
+            ),
+
+          duration:
+            0.28,
+
+          ease:
+            "back.out(1.4)",
+
+          onUpdate:
+            updateSelection
+
+        }
+
+      );
+
+    }
+
+    else {
+
+      const free =
+        findFreePosition(
+          wrapper
+        );
+
+
+      wrapper.position.set(
+
+        gridToWorld(
+          free.x
+        ),
+
+        0.025,
+
+        gridToWorld(
+          free.z
+        )
+
+      );
+
+
+      occupyObject(
+
+        wrapper,
+
+        free.x,
+
         free.z
-      )
 
-    );
-
-
-    occupyObject(
-
-      wrapper,
-
-      free.x,
-
-      free.z
-
-    );
+      );
 
 
-    placedObjects.push(
-      wrapper
-    );
+      placedObjects.push(
+        wrapper
+      );
 
 
-    setActiveObject(
-      wrapper
-    );
+      setActiveObject(
+        wrapper
+      );
 
 
-    updateBOM();
+      updateBOM();
 
 
-    gsap.to(
+      gsap.to(
 
-      wrapper.position,
+        wrapper.position,
 
-      {
+        {
 
-        y: 0,
+          y: 0,
 
-        duration:
-          0.28,
+          duration:
+            0.28,
 
-        ease:
-          "back.out(1.4)",
+          ease:
+            "back.out(1.4)",
 
-        onUpdate:
-          updateSelection
+          onUpdate:
+            updateSelection
 
-      }
+        }
 
-    );
+      );
+
+    }
 
 
     showStatus(
@@ -4020,8 +4863,9 @@ async function addPart(
 
 
 /* ============================================================
-   OBJEKT KOPIEREN
+   COPY OBJECT
    ============================================================ */
+
 
 async function copyActivePart() {
 
@@ -4038,13 +4882,9 @@ async function copyActivePart() {
     activeObject;
 
 
-  const productId =
-    original.userData.productId;
-
-
   const product =
-    productMap.get(
-      productId
+    getProductForObject(
+      original
     );
 
 
@@ -4054,17 +4894,12 @@ async function copyActivePart() {
     );
 
 
-  showStatus(
-    `${product.name} wird kopiert …`
-  );
-
-
   try {
 
     const copy =
       await createObjectFromProduct(
 
-        productId,
+        product.id,
 
         rotationSteps
 
@@ -4076,6 +4911,54 @@ async function copyActivePart() {
     );
 
 
+    if (
+      isFreeProduct(
+        product
+      )
+    ) {
+
+      /*
+        Freie Kopie 25 mm diagonal versetzt.
+      */
+
+      copy.position.set(
+
+        original.position.x +
+        0.025,
+
+        getProductHeight(
+          product
+        ),
+
+        original.position.z +
+        0.025
+
+      );
+
+
+      placedObjects.push(
+        copy
+      );
+
+
+      setActiveObject(
+        copy
+      );
+
+
+      updateBOM();
+
+
+      showStatus(
+        `${product.name} kopiert`
+      );
+
+
+      return;
+
+    }
+
+
     const originalX =
       original.userData.gridX;
 
@@ -4084,97 +4967,62 @@ async function copyActivePart() {
       original.userData.gridZ;
 
 
-    /*
-      Erst in direkter Umgebung suchen.
-      1 Feld Abstand reicht für kleinere Teile.
+    const candidates =
+      [];
 
-      Falls dort kein Platz ist,
-      wird global ein freier Platz gesucht.
+
+    /*
+      Suche zunehmend größere Umgebung,
+      damit auch 2x3-Elemente sauber kopiert werden.
     */
 
-    const candidates = [
+    for (
+      let distance = 1;
+      distance <= 6;
+      distance++
+    ) {
 
-      {
-        x:
-          originalX + 1,
+      candidates.push(
 
-        z:
-          originalZ
-      },
+        {
+          x:
+            originalX +
+            distance,
 
-      {
-        x:
-          originalX,
+          z:
+            originalZ
+        },
 
-        z:
-          originalZ + 1
-      },
+        {
+          x:
+            originalX,
 
-      {
-        x:
-          originalX - 1,
+          z:
+            originalZ +
+            distance
+        },
 
-        z:
-          originalZ
-      },
+        {
+          x:
+            originalX -
+            distance,
 
-      {
-        x:
-          originalX,
+          z:
+            originalZ
+        },
 
-        z:
-          originalZ - 1
-      },
+        {
+          x:
+            originalX,
 
-      {
-        x:
-          originalX + 2,
+          z:
+            originalZ -
+            distance
+        }
 
-        z:
-          originalZ
-      },
+      );
 
-      {
-        x:
-          originalX,
-
-        z:
-          originalZ + 2
-      },
-
-      {
-        x:
-          originalX - 2,
-
-        z:
-          originalZ
-      },
-
-      {
-        x:
-          originalX,
-
-        z:
-          originalZ - 2
-      },
-
-      {
-        x:
-          originalX + 3,
-
-        z:
-          originalZ
-      },
-
-      {
-        x:
-          originalX,
-
-        z:
-          originalZ + 3
-      }
-
-    ];
+    }
 
 
     let target =
@@ -4317,6 +5165,7 @@ async function copyActivePart() {
    SELECTION
    ============================================================ */
 
+
 function removeSelection() {
 
   if (
@@ -4430,15 +5279,8 @@ function updateSelection() {
 
 /* ============================================================
    TOOLBAR POSITION
-
-   Hier wird nicht einfach box.max.x verwendet.
-
-   Stattdessen werden alle 8 BoundingBox-Ecken
-   auf den Bildschirm projiziert.
-
-   Dadurch sitzt die Toolbar auch bei gedrehter Kamera
-   wirklich rechts neben dem Bauteil.
    ============================================================ */
+
 
 function updateObjectToolbar() {
 
@@ -4446,11 +5288,9 @@ function updateObjectToolbar() {
     !activeObject
   ) {
 
-    objectToolbar
-      .classList
-      .remove(
-        "visible"
-      );
+    objectToolbar.classList.remove(
+      "visible"
+    );
 
 
     return;
@@ -4469,11 +5309,9 @@ function updateObjectToolbar() {
     box.isEmpty()
   ) {
 
-    objectToolbar
-      .classList
-      .remove(
-        "visible"
-      );
+    objectToolbar.classList.remove(
+      "visible"
+    );
 
 
     return;
@@ -4542,19 +5380,19 @@ function updateObjectToolbar() {
     canvas.clientHeight;
 
 
-  let minScreenX =
+  let minX =
     Infinity;
 
 
-  let maxScreenX =
+  let maxX =
     -Infinity;
 
 
-  let minScreenY =
+  let minY =
     Infinity;
 
 
-  let maxScreenY =
+  let maxY =
     -Infinity;
 
 
@@ -4616,30 +5454,30 @@ function updateObjectToolbar() {
       height;
 
 
-    minScreenX =
+    minX =
       Math.min(
-        minScreenX,
+        minX,
         screenX
       );
 
 
-    maxScreenX =
+    maxX =
       Math.max(
-        maxScreenX,
+        maxX,
         screenX
       );
 
 
-    minScreenY =
+    minY =
       Math.min(
-        minScreenY,
+        minY,
         screenY
       );
 
 
-    maxScreenY =
+    maxY =
       Math.max(
-        maxScreenY,
+        maxY,
         screenY
       );
 
@@ -4650,11 +5488,9 @@ function updateObjectToolbar() {
     !visible
   ) {
 
-    objectToolbar
-      .classList
-      .remove(
-        "visible"
-      );
+    objectToolbar.classList.remove(
+      "visible"
+    );
 
 
     return;
@@ -4691,15 +5527,15 @@ function updateObjectToolbar() {
 
 
   let x =
-    maxScreenX +
+    maxX +
     12;
 
 
   let y =
 
     (
-      minScreenY +
-      maxScreenY
+      minY +
+      maxY
     )
 
     /
@@ -4711,11 +5547,6 @@ function updateObjectToolbar() {
     toolbarHeight /
     2;
 
-
-  /*
-    Falls rechts nicht genug Platz ist,
-    Toolbar links vom Objekt darstellen.
-  */
 
   if (
 
@@ -4731,7 +5562,7 @@ function updateObjectToolbar() {
 
     x =
 
-      minScreenX
+      minX
 
       -
 
@@ -4743,10 +5574,6 @@ function updateObjectToolbar() {
 
   }
 
-
-  /*
-    Im sichtbaren Bereich halten.
-  */
 
   x =
     Math.max(
@@ -4792,19 +5619,18 @@ function updateObjectToolbar() {
     `${y}px`;
 
 
-  objectToolbar
-    .classList
-    .add(
-      "visible"
-    );
+  objectToolbar.classList.add(
+    "visible"
+  );
 
 }
 
 
 
 /* ============================================================
-   SELECTABLE ROOT
+   SELECT ROOT
    ============================================================ */
+
 
 function findSelectableRoot(
   object
@@ -4846,8 +5672,9 @@ function findSelectableRoot(
 
 
 /* ============================================================
-   POINTER POSITION
+   POINTER
    ============================================================ */
+
 
 function updatePointer(
   event
@@ -4906,10 +5733,6 @@ function updatePointer(
 
 
 
-/* ============================================================
-   OBJECT UNDER POINTER
-   ============================================================ */
-
 function getObjectAtPointer() {
 
   raycaster.setFromCamera(
@@ -4963,6 +5786,7 @@ function getObjectAtPointer() {
    PLACEMENT MARKER
    ============================================================ */
 
+
 function removePlacementMarker() {
 
   if (
@@ -5012,10 +5836,6 @@ function removePlacementMarker() {
 
 
 
-/* ============================================================
-   MARKER
-   ============================================================ */
-
 function showPlacementMarker(
 
   object,
@@ -5031,6 +5851,27 @@ function showPlacementMarker(
   removePlacementMarker();
 
 
+  const product =
+    getProductForObject(
+      object
+    );
+
+
+  /*
+    Bei freiem Zubehör kein Rastermarker.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    return;
+
+  }
+
+
   placementMarker =
     new THREE.Group();
 
@@ -5042,7 +5883,7 @@ function showPlacementMarker(
 
 
   for (
-    const [x, z]
+    const [x,z]
     of localCells
   ) {
 
@@ -5146,6 +5987,7 @@ function showPlacementMarker(
    POINTER DOWN
    ============================================================ */
 
+
 canvas.addEventListener(
 
   "pointerdown",
@@ -5221,6 +6063,11 @@ canvas.addEventListener(
       target.userData.gridZ;
 
 
+    originalPosition.copy(
+      target.position
+    );
+
+
     raycaster.setFromCamera(
 
       pointer,
@@ -5283,6 +6130,7 @@ canvas.addEventListener(
 /* ============================================================
    POINTER MOVE
    ============================================================ */
+
 
 canvas.addEventListener(
 
@@ -5364,6 +6212,12 @@ canvas.addEventListener(
     }
 
 
+    const product =
+      getProductForObject(
+        activeObject
+      );
+
+
     const rawX =
 
       dragIntersection.x +
@@ -5374,6 +6228,48 @@ canvas.addEventListener(
 
       dragIntersection.z +
       dragOffset.z;
+
+
+    /*
+      FREIE POSITIONIERUNG
+    */
+
+    if (
+      isFreeProduct(
+        product
+      )
+    ) {
+
+      activeObject.position.set(
+
+        rawX,
+
+        getProductHeight(
+          product
+        ),
+
+        rawZ
+
+      );
+
+
+      removePlacementMarker();
+
+
+      updateSelection();
+
+
+      event.preventDefault();
+
+
+      return;
+
+    }
+
+
+    /*
+      GRID POSITIONIERUNG
+    */
 
 
     const gridX =
@@ -5440,8 +6336,9 @@ canvas.addEventListener(
 
 
 /* ============================================================
-   POINTER UP
+   FINISH DRAG
    ============================================================ */
+
 
 function finishDrag(
   event
@@ -5487,6 +6384,55 @@ function finishDrag(
 
 
   removePlacementMarker();
+
+
+  const product =
+    getProductForObject(
+      activeObject
+    );
+
+
+  /*
+    Freies Zubehör bleibt exakt dort,
+    wo es losgelassen wurde.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    activeObject.position.y =
+      getProductHeight(
+        product
+      );
+
+
+    updateSelection();
+
+
+    try {
+
+      canvas.releasePointerCapture(
+        event.pointerId
+      );
+
+    }
+
+    catch (
+      error
+    ) {}
+
+
+    return;
+
+  }
+
+
+  /*
+    Grid Objekt
+  */
 
 
   const gridX =
@@ -5565,16 +6511,13 @@ function finishDrag(
       {
 
         x:
-          gridToWorld(
-            originalGrid.x
-          ),
+          originalPosition.x,
 
-        y: 0,
+        y:
+          originalPosition.y,
 
         z:
-          gridToWorld(
-            originalGrid.z
-          ),
+          originalPosition.z,
 
         duration:
           0.18,
@@ -5634,8 +6577,9 @@ canvas.addEventListener(
 
 
 /* ============================================================
-   DREHEN
+   ROTATE
    ============================================================ */
+
 
 function rotateActivePart() {
 
@@ -5646,6 +6590,12 @@ function rotateActivePart() {
     return;
 
   }
+
+
+  const product =
+    getProductForObject(
+      activeObject
+    );
 
 
   const oldRotation =
@@ -5668,6 +6618,30 @@ function rotateActivePart() {
 
   activeObject.userData.rotationSteps =
     newRotation;
+
+
+  /*
+    Freies Zubehör benötigt keine Kollisionsprüfung.
+  */
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    applyRotation(
+
+      activeObject,
+
+      true
+
+    );
+
+
+    return;
+
+  }
 
 
   const gridX =
@@ -5734,8 +6708,9 @@ function rotateActivePart() {
 
 
 /* ============================================================
-   LÖSCHEN
+   DELETE
    ============================================================ */
+
 
 function deleteActivePart() {
 
@@ -5804,6 +6779,7 @@ function deleteActivePart() {
    BOM COUNTS
    ============================================================ */
 
+
 function getBOMCounts() {
 
   const counts =
@@ -5852,6 +6828,7 @@ function getBOMCounts() {
    BOM UI
    ============================================================ */
 
+
 function updateBOM() {
 
   const container =
@@ -5879,7 +6856,8 @@ function updateBOM() {
 
 
   if (
-    counts.size === 0
+    placedObjects.length ===
+    0
   ) {
 
     container.innerHTML = `
@@ -5890,27 +6868,52 @@ function updateBOM() {
 
     `;
 
+
+    totalElement.textContent =
+      formatPrice(
+        0
+      );
+
+
+    return;
+
   }
 
 
   for (
-    const product
-    of products
+    const group
+    of groups
   ) {
 
-    const quantity =
+    const groupProducts =
+      products.filter(
 
-      counts.get(
-        product.id
-      )
+        product =>
 
-      ||
+          product.group ===
+          group.id
 
-      0;
+          &&
+
+          (
+            counts.get(
+              product.id
+            )
+
+            ||
+
+            0
+          )
+
+          >
+          0
+
+      );
 
 
     if (
-      quantity === 0
+      groupProducts.length ===
+      0
     ) {
 
       continue;
@@ -5918,45 +6921,76 @@ function updateBOM() {
     }
 
 
-    const subtotal =
-
-      quantity *
-
-      product.price;
-
-
-    total +=
-      subtotal;
-
-
-    const row =
+    const title =
       document.createElement(
         "div"
       );
 
 
-    row.className =
-      "bom-row";
+    title.className =
+      "bom-group-title";
 
 
-    row.innerHTML = `
-
-      <span class="bom-name">
-        ${quantity}×
-        ${escapeHTML(product.name)}
-      </span>
-
-
-      <span class="bom-price">
-        ${formatPrice(subtotal)}
-      </span>
-
-    `;
+    title.textContent =
+      group.name;
 
 
     container.appendChild(
-      row
+      title
     );
+
+
+    for (
+      const product
+      of groupProducts
+    ) {
+
+      const quantity =
+        counts.get(
+          product.id
+        );
+
+
+      const subtotal =
+
+        quantity *
+
+        product.price;
+
+
+      total +=
+        subtotal;
+
+
+      const row =
+        document.createElement(
+          "div"
+        );
+
+
+      row.className =
+        "bom-row";
+
+
+      row.innerHTML = `
+
+        <span class="bom-name">
+          ${quantity}×
+          ${escapeHTML(product.name)}
+        </span>
+
+        <span class="bom-price">
+          ${formatPrice(subtotal)}
+        </span>
+
+      `;
+
+
+      container.appendChild(
+        row
+      );
+
+    }
 
   }
 
@@ -5973,6 +7007,7 @@ function updateBOM() {
 /* ============================================================
    BOM TEXT
    ============================================================ */
+
 
 function createBOMText() {
 
@@ -5992,55 +7027,99 @@ function createBOMText() {
 
 
   for (
-    const product
-    of products
+    const group
+    of groups
   ) {
 
-    const quantity =
-
-      counts.get(
-        product.id
-      )
-
-      ||
-
-      0;
+    const lines =
+      [];
 
 
-    if (
-      quantity === 0
+    for (
+      const product
+      of products
     ) {
 
-      continue;
+      if (
+        product.group !==
+        group.id
+      ) {
+
+        continue;
+
+      }
+
+
+      const quantity =
+
+        counts.get(
+          product.id
+        )
+
+        ||
+
+        0;
+
+
+      if (
+        quantity === 0
+      ) {
+
+        continue;
+
+      }
+
+
+      const subtotal =
+
+        quantity *
+
+        product.price;
+
+
+      total +=
+        subtotal;
+
+
+      lines.push(
+
+        `${quantity}x ${product.name} - ${formatPrice(subtotal)}`
+
+      );
 
     }
 
 
-    const subtotal =
+    if (
+      lines.length >
+      0
+    ) {
 
-      quantity *
-
-      product.price;
-
-
-    total +=
-      subtotal;
+      text +=
+        `${group.name}\n`;
 
 
-    text +=
+      text +=
+        "--------------------------\n";
 
-      `${quantity}x ${product.name}\n`
 
-      +
+      text +=
+        lines.join(
+          "\n"
+        );
 
-      `${formatPrice(subtotal)}\n\n`;
+
+      text +=
+        "\n\n";
+
+    }
 
   }
 
 
   text +=
 
-    "--------------------------\n"
+    "==========================\n"
 
     +
 
@@ -6057,6 +7136,7 @@ function createBOMText() {
    SCREENSHOT
    ============================================================ */
 
+
 function getConfiguratorImage(
 
   type =
@@ -6067,13 +7147,13 @@ function getConfiguratorImage(
 
 ) {
 
-  const selectionWasVisible =
+  const selectionVisible =
     selectionHelper
       ? selectionHelper.visible
       : false;
 
 
-  const markerWasVisible =
+  const markerVisible =
     placementMarker
       ? placementMarker.visible
       : false;
@@ -6123,7 +7203,7 @@ function getConfiguratorImage(
   ) {
 
     selectionHelper.visible =
-      selectionWasVisible;
+      selectionVisible;
 
   }
 
@@ -6133,7 +7213,7 @@ function getConfiguratorImage(
   ) {
 
     placementMarker.visible =
-      markerWasVisible;
+      markerVisible;
 
   }
 
@@ -6156,6 +7236,7 @@ function getConfiguratorImage(
 /* ============================================================
    PNG
    ============================================================ */
+
 
 function exportImage() {
 
@@ -6223,6 +7304,7 @@ function exportImage() {
 /* ============================================================
    PDF
    ============================================================ */
+
 
 function exportPDF() {
 
@@ -6380,43 +7462,6 @@ function exportPDF() {
     14;
 
 
-  pdf.setFont(
-    "helvetica",
-    "bold"
-  );
-
-
-  pdf.setFontSize(
-    14
-  );
-
-
-  pdf.text(
-
-    "Stückliste",
-
-    15,
-
-    y
-
-  );
-
-
-  y +=
-    9;
-
-
-  pdf.setFont(
-    "helvetica",
-    "normal"
-  );
-
-
-  pdf.setFontSize(
-    9.5
-  );
-
-
   const counts =
     getBOMCounts();
 
@@ -6426,23 +7471,39 @@ function exportPDF() {
 
 
   for (
-    const product
-    of products
+    const group
+    of groups
   ) {
 
-    const quantity =
+    const groupProducts =
+      products.filter(
 
-      counts.get(
-        product.id
-      )
+        product =>
 
-      ||
+          product.group ===
+          group.id
 
-      0;
+          &&
+
+          (
+            counts.get(
+              product.id
+            )
+
+            ||
+
+            0
+          )
+
+          >
+          0
+
+      );
 
 
     if (
-      quantity === 0
+      groupProducts.length ===
+      0
     ) {
 
       continue;
@@ -6450,20 +7511,9 @@ function exportPDF() {
     }
 
 
-    const subtotal =
-
-      quantity *
-
-      product.price;
-
-
-    total +=
-      subtotal;
-
-
     if (
       y >
-      270
+      260
     ) {
 
       pdf.addPage();
@@ -6475,24 +7525,20 @@ function exportPDF() {
     }
 
 
-    const label =
+    pdf.setFont(
+      "helvetica",
+      "bold"
+    );
 
-      `${quantity}x ${product.name}`;
 
-
-    const wrapped =
-      pdf.splitTextToSize(
-
-        label,
-
-        135
-
-      );
+    pdf.setFontSize(
+      12
+    );
 
 
     pdf.text(
 
-      wrapped,
+      group.name,
 
       15,
 
@@ -6501,40 +7547,119 @@ function exportPDF() {
     );
 
 
-    pdf.text(
+    y +=
+      7;
 
-      formatPrice(
-        subtotal
-      ),
 
-      195,
-
-      y,
-
-      {
-        align:
-          "right"
-      }
-
+    pdf.setFont(
+      "helvetica",
+      "normal"
     );
 
 
-    y +=
+    pdf.setFontSize(
+      9.5
+    );
 
-      Math.max(
 
-        7,
+    for (
+      const product
+      of groupProducts
+    ) {
 
-        wrapped.length *
-        5
+      const quantity =
+        counts.get(
+          product.id
+        );
+
+
+      const subtotal =
+
+        quantity *
+
+        product.price;
+
+
+      total +=
+        subtotal;
+
+
+      if (
+        y >
+        270
+      ) {
+
+        pdf.addPage();
+
+
+        y =
+          20;
+
+      }
+
+
+      const label =
+
+        `${quantity}x ${product.name}`;
+
+
+      const wrapped =
+        pdf.splitTextToSize(
+
+          label,
+
+          135
+
+        );
+
+
+      pdf.text(
+
+        wrapped,
+
+        15,
+
+        y
 
       );
 
+
+      pdf.text(
+
+        formatPrice(
+          subtotal
+        ),
+
+        195,
+
+        y,
+
+        {
+          align:
+            "right"
+        }
+
+      );
+
+
+      y +=
+
+        Math.max(
+
+          7,
+
+          wrapped.length *
+          5
+
+        );
+
+    }
+
+
+    y +=
+      4;
+
   }
-
-
-  y +=
-    2;
 
 
   pdf.line(
@@ -6656,17 +7781,6 @@ function exportPDF() {
   );
 
 
-  pdf.text(
-
-    "DesignLab",
-
-    15,
-
-    y + 5
-
-  );
-
-
   pdf.save(
     "ModuDisplays-Konfiguration.pdf"
   );
@@ -6681,8 +7795,9 @@ function exportPDF() {
 
 
 /* ============================================================
-   BOM KOPIEREN
+   COPY BOM
    ============================================================ */
+
 
 async function copyBOM() {
 
@@ -6776,6 +7891,7 @@ async function copyBOM() {
    EMAIL
    ============================================================ */
 
+
 function prepareEmail() {
 
   if (
@@ -6847,6 +7963,7 @@ function prepareEmail() {
 /* ============================================================
    RESET
    ============================================================ */
+
 
 function resetConfiguration() {
 
@@ -6932,6 +8049,7 @@ function resetConfiguration() {
    FORMAT
    ============================================================ */
 
+
 function formatPrice(
   value
 ) {
@@ -6959,8 +8077,9 @@ function formatPrice(
 
 
 /* ============================================================
-   HTML ESCAPE
+   ESCAPE HTML
    ============================================================ */
+
 
 function escapeHTML(
   value
@@ -7002,6 +8121,7 @@ function escapeHTML(
 /* ============================================================
    STATUS
    ============================================================ */
+
 
 function showStatus(
 
@@ -7062,6 +8182,7 @@ function showStatus(
 /* ============================================================
    KEYBOARD
    ============================================================ */
+
 
 window.addEventListener(
 
@@ -7151,6 +8272,7 @@ window.addEventListener(
    RESIZE
    ============================================================ */
 
+
 function resize() {
 
   const width =
@@ -7163,11 +8285,13 @@ function resize() {
 
   if (
 
-    width === 0
+    width ===
+    0
 
     ||
 
-    height === 0
+    height ===
+    0
 
   ) {
 
@@ -7207,7 +8331,6 @@ window.addEventListener(
 );
 
 
-
 window.visualViewport
   ?.addEventListener(
 
@@ -7220,8 +8343,9 @@ window.visualViewport
 
 
 /* ============================================================
-   RENDER LOOP
+   ANIMATE
    ============================================================ */
+
 
 function animate() {
 
@@ -7283,6 +8407,7 @@ function animate() {
    START
    ============================================================ */
 
+
 async function start() {
 
   resize();
@@ -7301,6 +8426,7 @@ async function start() {
 
 
 start();
+
 
 </script>
 

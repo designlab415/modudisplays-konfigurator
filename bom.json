@@ -7,6 +7,10 @@
       "name": "Garage"
     },
     {
+      "id": "pitlane",
+      "name": "Boxengasse"
+    },
+    {
       "id": "accessories",
       "name": "Sonstiges Zubehör"
     }
@@ -96,6 +100,22 @@
     },
 
     {
+      "id": "ladepad_asphalt",
+      "name": "ModuDisplays - Ladepad / Asphalt (1x2)",
+      "price": 9.90,
+      "model": "ladepad_asphalt.glb",
+      "image": "ladepad_asphalt.webp",
+
+      "group": "pitlane",
+      "placement": "grid",
+
+      "cellsX": 1,
+      "cellsZ": 2,
+
+      "enabled": true
+    },
+
+    {
       "id": "rueckwand",
       "name": "ModuDisplays - Rückwand Garage (1x1)",
       "price": 5.90,
@@ -128,7 +148,7 @@
     },
 
     {
-      "id": "hebehuehne",
+      "id": "hebebuehne",
       "name": "Hebebühne",
       "price": 4.90,
       "model": "hebebuehne.glb",

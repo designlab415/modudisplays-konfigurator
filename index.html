@@ -380,7 +380,12 @@
        ========================================================= */
 
     .desktop-product-group {
-      margin-bottom: 18px;
+      display: none;
+      margin-bottom: 0;
+    }
+
+    .desktop-product-group.mobile-active-group {
+      display: block;
     }
 
 
@@ -400,7 +405,7 @@
 
 
     .product-group-heading {
-      display: flex;
+      display: none;
 
       align-items: center;
       justify-content: space-between;
@@ -503,7 +508,19 @@
        ========================================================= */
 
     #mobile-group-selector {
-      display: none;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 7px;
+
+      margin: -4px -4px 14px;
+      padding: 4px;
+
+      background: rgba(255,255,255,0.97);
+      backdrop-filter: blur(8px);
     }
 
 
@@ -664,27 +681,6 @@
     }
 
 
-    .free-placement-badge {
-      display: inline-block;
-
-      margin-top: 5px;
-
-      padding:
-        3px 6px;
-
-      background: #e8f5e9;
-
-      border-radius: 4px;
-
-      color: #2e7d32;
-
-      font-size: 9px;
-      font-weight: 700;
-
-      text-transform: uppercase;
-
-      letter-spacing: 0.35px;
-    }
 
 
     .btn-add {
@@ -875,6 +871,63 @@
 
 
     /* =========================================================
+       LOCAL SAVE
+       ========================================================= */
+
+    .local-save-box {
+      margin-top: 12px;
+      padding: 11px 12px;
+      background: #f8f9fa;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+    }
+
+    .local-save-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 4px;
+      color: #212529;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .local-save-status {
+      color: #6c757d;
+      font-size: 10px;
+      line-height: 1.45;
+    }
+
+    .local-save-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 7px;
+      margin-top: 9px;
+    }
+
+    .btn-local-save {
+      min-height: 38px;
+      padding: 8px;
+      background: #ffffff;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      color: #212529;
+      cursor: pointer;
+      font-size: 11px;
+      font-weight: 650;
+    }
+
+    .btn-local-save:hover {
+      background: #f1f3f5;
+    }
+
+    .btn-local-clear {
+      color: #b02a37;
+      border-color: #e3b8bd;
+    }
+
+    /* =========================================================
        EXPORT
        ========================================================= */
 
@@ -1004,9 +1057,9 @@
 
 
     .mobile-tab {
-      min-height: 42px;
+      min-height: 54px;
 
-      padding: 8px 6px;
+      padding: 12px 10px;
 
       background: transparent;
 
@@ -1018,7 +1071,7 @@
 
       cursor: pointer;
 
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
     }
 
@@ -1387,7 +1440,7 @@
         min-height: 44px;
 
         padding:
-          7px 5px;
+          12px 14px;
 
         background: transparent;
 
@@ -1442,17 +1495,11 @@
 
 
       #mobile-group-selector {
-        display: grid;
-
-        grid-template-columns:
-          repeat(
-            2,
-            minmax(0,1fr)
-          );
-
+        top: 0;
+        grid-template-columns: repeat(2, minmax(0,1fr));
         gap: 7px;
-
-        margin-bottom: 12px;
+        margin: -2px -2px 12px;
+        padding: 2px;
       }
 
 
@@ -1936,6 +1983,36 @@
       </div>
 
 
+      <div class="local-save-box">
+        <div class="local-save-title">
+          <span>Lokale Speicherung</span>
+          <span>✓ automatisch</span>
+        </div>
+
+        <div id="local-save-status" class="local-save-status">
+          Änderungen werden automatisch auf diesem Gerät gespeichert.
+        </div>
+
+        <div class="local-save-actions">
+          <button
+            class="btn-local-save"
+            type="button"
+            onclick="saveConfigurationToLocalStorage(true)"
+          >
+            Jetzt speichern
+          </button>
+
+          <button
+            class="btn-local-save btn-local-clear"
+            type="button"
+            onclick="clearLocalConfiguration()"
+          >
+            Speicher löschen
+          </button>
+        </div>
+      </div>
+
+
       <button
         class="btn-reset"
         type="button"
@@ -2014,6 +2091,18 @@ let draggingPointerId =
 
 let statusTimeout =
   null;
+
+
+const LOCAL_STORAGE_KEY =
+  "modudisplays-konfiguration-v1";
+
+
+let localSaveTimeout =
+  null;
+
+
+let isRestoringLocalConfiguration =
+  false;
 
 
 
@@ -2729,14 +2818,27 @@ function showMobileProductGroup(
 
       section => {
 
-        section.classList.toggle(
-
-          "mobile-active-group",
-
+        const isActive =
           section.dataset.group ===
-          groupId
+          groupId;
 
+
+        section.classList.toggle(
+          "mobile-active-group",
+          isActive
         );
+
+
+        if (
+          isActive
+          &&
+          section.tagName === "DETAILS"
+        ) {
+
+          section.open =
+            true;
+
+        }
 
       }
 
@@ -2763,6 +2865,17 @@ function showMobileProductGroup(
       }
 
     );
+
+
+  const content =
+    document.querySelector(
+      ".sidebar-content"
+    );
+
+
+  if (content) {
+    content.scrollTop = 0;
+  }
 
 }
 
@@ -3096,6 +3209,10 @@ function renderMobileGroupSelector() {
 
     button.textContent =
       group.name;
+
+
+    button.title =
+      `${group.name} anzeigen`;
 
 
     button.addEventListener(
@@ -4269,14 +4386,16 @@ function normalizeModelOrigin(
     object.userData.modelRoot;
 
 
+  const product =
+    getProductForObject(
+      object
+    );
+
+
   model.position.set(
-
     0,
-
     0,
-
     0
-
   );
 
 
@@ -4292,16 +4411,39 @@ function normalizeModelOrigin(
       );
 
 
-  model.position.x =
-    -box.min.x;
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    const centerX =
+      (box.min.x + box.max.x) / 2;
+
+    const centerZ =
+      (box.min.z + box.max.z) / 2;
 
 
-  model.position.y =
-    -box.min.y;
+    model.position.x =
+      -centerX;
 
+    model.position.y =
+      -box.min.y;
 
-  model.position.z =
-    -box.min.z;
+    model.position.z =
+      -centerZ;
+
+  }
+
+  else {
+
+    model.position.x =
+      -box.min.x;
+
+    model.position.z =
+      -box.min.z;
+
+  }
 
 
   model.updateMatrixWorld(
@@ -4353,6 +4495,12 @@ function applyRotation(
     object.userData.rotationRoot;
 
 
+  const product =
+    getProductForObject(
+      object
+    );
+
+
   const steps =
     getRotationSteps(
       object
@@ -4363,6 +4511,52 @@ function applyRotation(
     steps *
     Math.PI /
     2;
+
+
+  if (
+    isFreeProduct(
+      product
+    )
+  ) {
+
+    if (
+      !animate
+    ) {
+
+      root.position.x = 0;
+      root.position.z = 0;
+      root.rotation.y = angle;
+      return;
+
+    }
+
+
+    gsap.to(
+      root.position,
+      {
+        x: 0,
+        z: 0,
+        duration: 0.25,
+        ease: "power2.inOut",
+        onUpdate: updateSelection
+      }
+    );
+
+
+    gsap.to(
+      root.rotation,
+      {
+        y: angle,
+        duration: 0.25,
+        ease: "power2.inOut",
+        onUpdate: updateSelection
+      }
+    );
+
+
+    return;
+
+  }
 
 
   const width =
@@ -4381,40 +4575,15 @@ function applyRotation(
     0;
 
 
-  if (
-    steps ===
-    1
-  ) {
-
-    offsetZ =
-      width;
-
+  if (steps === 1) {
+    offsetZ = width;
   }
-
-
-  else if (
-    steps ===
-    2
-  ) {
-
-    offsetX =
-      width;
-
-
-    offsetZ =
-      depth;
-
+  else if (steps === 2) {
+    offsetX = width;
+    offsetZ = depth;
   }
-
-
-  else if (
-    steps ===
-    3
-  ) {
-
-    offsetX =
-      depth;
-
+  else if (steps === 3) {
+    offsetX = depth;
   }
 
 
@@ -4422,69 +4591,34 @@ function applyRotation(
     !animate
   ) {
 
-    root.rotation.y =
-      angle;
-
-
-    root.position.x =
-      offsetX;
-
-
-    root.position.z =
-      offsetZ;
-
-
+    root.rotation.y = angle;
+    root.position.x = offsetX;
+    root.position.z = offsetZ;
     return;
 
   }
 
 
   gsap.to(
-
     root.rotation,
-
     {
-
-      y:
-        angle,
-
-      duration:
-        0.25,
-
-      ease:
-        "power2.inOut",
-
-      onUpdate:
-        updateSelection
-
+      y: angle,
+      duration: 0.25,
+      ease: "power2.inOut",
+      onUpdate: updateSelection
     }
-
   );
 
 
   gsap.to(
-
     root.position,
-
     {
-
-      x:
-        offsetX,
-
-      z:
-        offsetZ,
-
-      duration:
-        0.25,
-
-      ease:
-        "power2.inOut",
-
-      onUpdate:
-        updateSelection
-
+      x: offsetX,
+      z: offsetZ,
+      duration: 0.25,
+      ease: "power2.inOut",
+      onUpdate: updateSelection
     }
-
   );
 
 }
@@ -4776,6 +4910,9 @@ async function addPart(
       `${product.name} hinzugefügt`
     );
 
+
+    saveConfigurationToLocalStorage();
+
   }
 
   catch (
@@ -4882,6 +5019,9 @@ async function copyActivePart() {
       showStatus(
         `${product.name} kopiert`
       );
+
+
+      saveConfigurationToLocalStorage();
 
 
       return;
@@ -5069,6 +5209,9 @@ async function copyActivePart() {
     showStatus(
       `${product.name} kopiert`
     );
+
+
+    saveConfigurationToLocalStorage();
 
   }
 
@@ -6305,6 +6448,9 @@ function finishDrag(
     updateSelection();
 
 
+    saveConfigurationToLocalStorage();
+
+
     try {
 
       canvas.releasePointerCapture(
@@ -6388,6 +6534,9 @@ function finishDrag(
       }
 
     );
+
+
+    saveConfigurationToLocalStorage();
 
   }
 
@@ -6520,6 +6669,9 @@ function rotateActivePart() {
     );
 
 
+    saveConfigurationToLocalStorage();
+
+
     return;
 
   }
@@ -6584,6 +6736,9 @@ function rotateActivePart() {
 
   );
 
+
+  saveConfigurationToLocalStorage();
+
 }
 
 
@@ -6646,6 +6801,483 @@ function deleteActivePart() {
   showStatus(
     "Bauteil entfernt."
   );
+
+
+  saveConfigurationToLocalStorage();
+
+}
+
+
+
+function updateLocalSaveStatus(
+  message
+) {
+
+  const element =
+    document.getElementById(
+      "local-save-status"
+    );
+
+
+  if (element) {
+    element.textContent = message;
+  }
+
+}
+
+
+
+function buildLocalConfigurationData() {
+
+  return {
+
+    version: 1,
+
+    savedAt:
+      new Date().toISOString(),
+
+    objects:
+      placedObjects.map(
+
+        object => {
+
+          const product =
+            getProductForObject(
+              object
+            );
+
+
+          const base = {
+
+            productId:
+              object.userData.productId,
+
+            rotationSteps:
+              getRotationSteps(
+                object
+              )
+
+          };
+
+
+          if (
+            isFreeProduct(
+              product
+            )
+          ) {
+
+            return {
+              ...base,
+              placement: "free",
+              x: object.position.x,
+              z: object.position.z
+            };
+
+          }
+
+
+          return {
+            ...base,
+            placement: "grid",
+            gridX: object.userData.gridX,
+            gridZ: object.userData.gridZ
+          };
+
+        }
+
+      )
+
+  };
+
+}
+
+
+
+function saveConfigurationToLocalStorage(
+  showConfirmation = false
+) {
+
+  if (
+    isRestoringLocalConfiguration
+  ) {
+    return;
+  }
+
+
+  clearTimeout(
+    localSaveTimeout
+  );
+
+
+  localSaveTimeout =
+    setTimeout(
+
+      () => {
+
+        try {
+
+          const data =
+            buildLocalConfigurationData();
+
+
+          localStorage.setItem(
+            LOCAL_STORAGE_KEY,
+            JSON.stringify(data)
+          );
+
+
+          const time =
+            new Intl.DateTimeFormat(
+              "de-DE",
+              {
+                hour: "2-digit",
+                minute: "2-digit"
+              }
+            ).format(
+              new Date()
+            );
+
+
+          updateLocalSaveStatus(
+            `Automatisch gespeichert · ${time} Uhr · nur auf diesem Gerät`
+          );
+
+
+          if (
+            showConfirmation
+          ) {
+
+            showStatus(
+              "Konfiguration lokal gespeichert."
+            );
+
+          }
+
+        }
+
+        catch (
+          error
+        ) {
+
+          console.warn(
+            "Lokale Speicherung nicht verfügbar:",
+            error
+          );
+
+
+          updateLocalSaveStatus(
+            "Lokale Speicherung ist in diesem Browser nicht verfügbar."
+          );
+
+
+          if (
+            showConfirmation
+          ) {
+
+            showStatus(
+              "Lokale Speicherung ist nicht verfügbar.",
+              true
+            );
+
+          }
+
+        }
+
+      },
+
+      showConfirmation
+        ? 0
+        : 120
+
+    );
+
+}
+
+
+
+async function restoreLocalConfiguration() {
+
+  let raw = null;
+
+
+  try {
+
+    raw =
+      localStorage.getItem(
+        LOCAL_STORAGE_KEY
+      );
+
+  }
+
+  catch (
+    error
+  ) {
+
+    updateLocalSaveStatus(
+      "Lokale Speicherung ist in diesem Browser nicht verfügbar."
+    );
+
+    return;
+
+  }
+
+
+  if (
+    !raw
+  ) {
+
+    updateLocalSaveStatus(
+      "Änderungen werden automatisch auf diesem Gerät gespeichert."
+    );
+
+    return;
+
+  }
+
+
+  try {
+
+    const data =
+      JSON.parse(raw);
+
+
+    if (
+      !data
+      ||
+      !Array.isArray(data.objects)
+    ) {
+      return;
+    }
+
+
+    isRestoringLocalConfiguration =
+      true;
+
+
+    let restored = 0;
+
+
+    for (
+      const saved
+      of data.objects
+    ) {
+
+      const product =
+        productMap.get(
+          saved.productId
+        );
+
+
+      if (
+        !product
+      ) {
+        continue;
+      }
+
+
+      try {
+
+        const object =
+          await createObjectFromProduct(
+            product.id,
+            Number(saved.rotationSteps || 0)
+          );
+
+
+        if (
+          isFreeProduct(
+            product
+          )
+        ) {
+
+          object.position.set(
+            Number(saved.x || 0),
+            getProductHeight(product),
+            Number(saved.z || 0)
+          );
+
+        }
+
+        else {
+
+          const gridX =
+            Number.isFinite(Number(saved.gridX))
+              ? Number(saved.gridX)
+              : 0;
+
+          const gridZ =
+            Number.isFinite(Number(saved.gridZ))
+              ? Number(saved.gridZ)
+              : 0;
+
+
+          if (
+            !canPlaceObject(
+              object,
+              gridX,
+              gridZ
+            )
+          ) {
+            continue;
+          }
+
+
+          object.position.set(
+            gridToWorld(gridX),
+            getProductHeight(product),
+            gridToWorld(gridZ)
+          );
+
+
+          occupyObject(
+            object,
+            gridX,
+            gridZ
+          );
+
+        }
+
+
+        scene.add(
+          object
+        );
+
+
+        placedObjects.push(
+          object
+        );
+
+
+        restored++;
+
+      }
+
+      catch (
+        error
+      ) {
+
+        console.warn(
+          "Gespeichertes Bauteil konnte nicht wiederhergestellt werden:",
+          saved.productId,
+          error
+        );
+
+      }
+
+    }
+
+
+    isRestoringLocalConfiguration =
+      false;
+
+
+    updateBOM();
+
+
+    if (
+      restored > 0
+    ) {
+
+      const savedDate =
+        data.savedAt
+          ? new Date(data.savedAt)
+          : null;
+
+
+      const dateText =
+        savedDate
+        &&
+        !Number.isNaN(savedDate.getTime())
+
+          ? new Intl.DateTimeFormat(
+              "de-DE",
+              {
+                day: "2-digit",
+                month: "2-digit",
+                hour: "2-digit",
+                minute: "2-digit"
+              }
+            ).format(savedDate)
+
+          : "zuletzt";
+
+
+      updateLocalSaveStatus(
+        `Gespeicherte Konfiguration geladen · ${dateText} · nur auf diesem Gerät`
+      );
+
+
+      showStatus(
+        "Gespeicherte Konfiguration wurde wiederhergestellt."
+      );
+
+    }
+
+  }
+
+  catch (
+    error
+  ) {
+
+    isRestoringLocalConfiguration =
+      false;
+
+
+    console.warn(
+      "Gespeicherte Konfiguration ist ungültig:",
+      error
+    );
+
+
+    updateLocalSaveStatus(
+      "Gespeicherte Konfiguration konnte nicht geladen werden."
+    );
+
+  }
+
+}
+
+
+
+function clearLocalConfiguration() {
+
+  if (
+    !confirm(
+      "Lokal gespeicherte Konfiguration auf diesem Gerät löschen?"
+    )
+  ) {
+    return;
+  }
+
+
+  try {
+
+    localStorage.removeItem(
+      LOCAL_STORAGE_KEY
+    );
+
+
+    updateLocalSaveStatus(
+      "Lokaler Speicher gelöscht. Neue Änderungen werden wieder automatisch gespeichert."
+    );
+
+
+    showStatus(
+      "Lokaler Speicher wurde gelöscht."
+    );
+
+  }
+
+  catch (
+    error
+  ) {
+
+    showStatus(
+      "Lokaler Speicher konnte nicht gelöscht werden.",
+      true
+    );
+
+  }
 
 }
 
@@ -7879,11 +8511,22 @@ function resetConfiguration() {
   updateBOM();
 
 
+  try {
+    localStorage.removeItem(LOCAL_STORAGE_KEY);
+  }
+  catch (error) {}
+
+
+  updateLocalSaveStatus(
+    "Keine lokale Konfiguration gespeichert."
+  );
+
+
   closeMobileMenu();
 
 
   showStatus(
-    "Konfiguration zurückgesetzt."
+    "Konfiguration zurückgesetzt und lokaler Speicher gelöscht."
   );
 
 }
@@ -8227,6 +8870,9 @@ async function start() {
 
 
   await loadBOM();
+
+
+  await restoreLocalConfiguration();
 
 
   animate();

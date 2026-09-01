@@ -713,94 +713,158 @@
        BOM
        ========================================================= */
 
-    .bom-list {
-      max-height: 180px;
+    .bom-overview {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-      margin-bottom: 14px;
-
-      padding: 10px;
-
-      overflow-y: auto;
-
+    .bom-stat {
+      padding: 10px 11px;
       background: #f8f9fa;
-
-      border:
-        1px solid #e9ecef;
-
-      border-radius: 6px;
-
-      font-size: 12px;
+      border: 1px solid #e9ecef;
+      border-radius: 8px;
     }
 
-
-    .bom-group-title {
-      margin:
-        10px 0 7px;
-
-      color: #6c757d;
-
-      font-size: 10px;
-      font-weight: 800;
-
-      text-transform: uppercase;
-
-      letter-spacing: 0.6px;
-    }
-
-
-    .bom-group-title:first-child {
-      margin-top: 0;
-    }
-
-
-    .bom-row {
-      display: flex;
-
-      justify-content:
-        space-between;
-
-      gap: 10px;
-
-      margin-bottom: 7px;
-    }
-
-
-    .bom-row:last-child {
-      margin-bottom: 0;
-    }
-
-
-    .bom-name {
-      flex: 1;
-    }
-
-
-    .bom-price {
-      white-space: nowrap;
-
-      font-weight: 600;
-    }
-
-
-    .bom-empty {
+    .bom-stat-label {
+      display: block;
+      margin-bottom: 2px;
       color: #868e96;
+      font-size: 9px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.55px;
     }
 
-
-    .total-row {
-      display: flex;
-
-      justify-content:
-        space-between;
-
-      align-items: center;
-
-      margin-bottom: 14px;
-
-      font-size: 18px;
+    .bom-stat-value {
+      display: block;
+      color: #212529;
+      font-size: 15px;
       font-weight: 750;
     }
 
+    .bom-list {
+      max-height: 320px;
+      margin-bottom: 14px;
+      overflow-y: auto;
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      font-size: 12px;
+    }
+
+    .bom-group-card {
+      margin-bottom: 10px;
+      overflow: hidden;
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 9px;
+    }
+
+    .bom-group-card:last-child {
+      margin-bottom: 0;
+    }
+
+    .bom-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 9px 10px;
+      background: #f4f6f8;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .bom-group-title {
+      color: #495057;
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .bom-group-subtotal {
+      color: #212529;
+      font-size: 11px;
+      font-weight: 750;
+      white-space: nowrap;
+    }
+
+    .bom-group-rows {
+      padding: 4px 10px;
+    }
+
+    .bom-row {
+      display: grid;
+      grid-template-columns: 34px minmax(0,1fr) auto;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f1f2;
+    }
+
+    .bom-row:last-child {
+      border-bottom: 0;
+    }
+
+    .bom-qty {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 28px;
+      background: #111111;
+      border-radius: 6px;
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 800;
+    }
+
+    .bom-name {
+      min-width: 0;
+    }
+
+    .bom-product-name {
+      display: block;
+      color: #212529;
+      font-size: 11px;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .bom-unit-price {
+      display: block;
+      margin-top: 2px;
+      color: #868e96;
+      font-size: 9px;
+    }
+
+    .bom-price {
+      color: #212529;
+      white-space: nowrap;
+      font-size: 11px;
+      font-weight: 750;
+    }
+
+    .bom-empty {
+      padding: 18px 12px;
+      background: #f8f9fa;
+      border: 1px dashed #ced4da;
+      border-radius: 8px;
+      color: #868e96;
+      text-align: center;
+    }
+
+    .total-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+      padding-top: 4px;
+      font-size: 18px;
+      font-weight: 750;
+    }
 
 
     /* =========================================================
@@ -1749,6 +1813,8 @@
       </div>
 
 
+      <div id="bom-overview" class="bom-overview"></div>
+
       <div
         id="bom-summary"
         class="bom-list"
@@ -2482,6 +2548,25 @@ function getProductHeight(
 
 
 
+function getCollisionLayer(product) {
+
+  if (!product) {
+    return "ground";
+  }
+
+  /*
+    Raster-Kollisionen werden pro Ebene getrennt verwaltet.
+    Dadurch kann z. B. der Aufbau auf Ebene 2 direkt über
+    einem Bauteil der Bodenebene stehen.
+  */
+  return String(
+    product.collisionLayer ||
+    (getProductHeight(product) > 0 ? `height-${product.heightMM}` : "ground")
+  );
+
+}
+
+
 function openMobileMenu() {
 
   document
@@ -3028,15 +3113,22 @@ function createProductCard(
     "";
 
 
+  const productHeightMM = Number(product.heightMM || 0);
+
+
   const meta =
 
     isFreeProduct(
       product
     )
 
-      ? "Frei platzierbares Zubehör"
+      ? `Frei platzierbar · Höhe ${productHeightMM} mm`
 
-      : `${product.cellsX} × ${product.cellsZ} Rasterfelder`;
+      : productHeightMM > 0
+
+        ? `${product.cellsX} × ${product.cellsZ} Rasterfelder · Ebene ${productHeightMM} mm`
+
+        : `${product.cellsX} × ${product.cellsZ} Rasterfelder · Bodenebene`;
 
 
   const freeBadge =
@@ -3353,11 +3445,12 @@ function worldToGrid(
 
 
 function cellKey(
+  layer,
   x,
   z
 ) {
 
-  return `${x},${z}`;
+  return `${layer}:${x},${z}`;
 
 }
 
@@ -3745,6 +3838,8 @@ function canPlaceObject(
 
         cellKey(
 
+          getCollisionLayer(product),
+
           cell.x,
 
           cell.z
@@ -3872,6 +3967,8 @@ function occupyObject(
     occupancy.set(
 
       cellKey(
+
+        getCollisionLayer(product),
 
         cell.x,
 
@@ -4604,7 +4701,7 @@ async function addPart(
           free.x
         ),
 
-        0.025,
+        getProductHeight(product) + 0.025,
 
         gridToWorld(
           free.z
@@ -4644,7 +4741,7 @@ async function addPart(
         {
 
           y:
-            0,
+            getProductHeight(product),
 
           duration:
             0.28,
@@ -4900,7 +4997,7 @@ async function copyActivePart() {
         target.x
       ),
 
-      0.025,
+      getProductHeight(product) + 0.025,
 
       gridToWorld(
         target.z
@@ -4940,7 +5037,7 @@ async function copyActivePart() {
       {
 
         y:
-          0,
+          getProductHeight(product),
 
         duration:
           0.24,
@@ -5755,7 +5852,7 @@ function showPlacementMarker(
       CELL_SIZE /
       2,
 
-      0.001,
+      getProductHeight(product) + 0.001,
 
       gridToWorld(
         gridZ +
@@ -5837,6 +5934,16 @@ canvas.addEventListener(
 
     setActiveObject(
       target
+    );
+
+
+    const targetProduct =
+      getProductForObject(target);
+
+
+    dragPlane.set(
+      new THREE.Vector3(0, 1, 0),
+      -getProductHeight(targetProduct)
     );
 
 
@@ -6085,7 +6192,7 @@ canvas.addEventListener(
         gridX
       ),
 
-      0.008,
+      getProductHeight(product) + 0.008,
 
       gridToWorld(
         gridZ
@@ -6252,7 +6359,7 @@ function finishDrag(
           ),
 
         y:
-          0,
+          getProductHeight(product),
 
         z:
           gridToWorld(
@@ -6578,177 +6685,106 @@ function getBOMCounts() {
 function updateBOM() {
 
   const container =
-    document.getElementById(
-      "bom-summary"
-    );
+    document.getElementById("bom-summary");
 
+  const overview =
+    document.getElementById("bom-overview");
 
   const totalElement =
-    document.getElementById(
-      "total-price"
-    );
+    document.getElementById("total-price");
 
+  container.innerHTML = "";
+  overview.innerHTML = "";
 
-  container.innerHTML =
-    "";
+  const counts = getBOMCounts();
 
+  const totalPieces = placedObjects.length;
+  const distinctProducts = [...counts.values()].filter(qty => qty > 0).length;
 
-  const counts =
-    getBOMCounts();
+  let total = 0;
 
+  for (const product of products) {
+    const qty = counts.get(product.id) || 0;
+    total += qty * Number(product.price || 0);
+  }
 
-  let total =
-    0;
+  overview.innerHTML = `
+    <div class="bom-stat">
+      <span class="bom-stat-label">Bauteile</span>
+      <span class="bom-stat-value">${totalPieces}</span>
+    </div>
+    <div class="bom-stat">
+      <span class="bom-stat-label">Artikelarten</span>
+      <span class="bom-stat-value">${distinctProducts}</span>
+    </div>
+  `;
 
-
-  if (
-    placedObjects.length ===
-    0
-  ) {
-
+  if (totalPieces === 0) {
     container.innerHTML = `
-
       <div class="bom-empty">
         Noch keine Komponenten platziert.
       </div>
-
     `;
 
-
-    totalElement.textContent =
-      formatPrice(
-        0
-      );
-
-
+    totalElement.textContent = formatPrice(0);
     return;
-
   }
 
+  for (const group of groups) {
 
-  for (
-    const group
-    of groups
-  ) {
-
-    const groupProducts =
-      products.filter(
-
-        product =>
-
-          product.group ===
-          group.id
-
-          &&
-
-          (
-            counts.get(
-              product.id
-            )
-
-            ||
-
-            0
-          )
-
-          >
-          0
-
-      );
-
-
-    if (
-      groupProducts.length ===
-      0
-    ) {
-
-      continue;
-
-    }
-
-
-    const title =
-      document.createElement(
-        "div"
-      );
-
-
-    title.className =
-      "bom-group-title";
-
-
-    title.textContent =
-      group.name;
-
-
-    container.appendChild(
-      title
+    const groupProducts = products.filter(product =>
+      product.group === group.id &&
+      (counts.get(product.id) || 0) > 0
     );
 
+    if (groupProducts.length === 0) {
+      continue;
+    }
 
-    for (
-      const product
-      of groupProducts
-    ) {
+    const groupSubtotal = groupProducts.reduce((sum, product) => {
+      const qty = counts.get(product.id) || 0;
+      return sum + qty * Number(product.price || 0);
+    }, 0);
 
-      const quantity =
-        counts.get(
-          product.id
-        );
+    const card = document.createElement("div");
+    card.className = "bom-group-card";
 
+    const header = document.createElement("div");
+    header.className = "bom-group-header";
+    header.innerHTML = `
+      <span class="bom-group-title">${escapeHTML(group.name)}</span>
+      <span class="bom-group-subtotal">${formatPrice(groupSubtotal)}</span>
+    `;
 
-      const subtotal =
+    const rows = document.createElement("div");
+    rows.className = "bom-group-rows";
 
-        quantity *
+    for (const product of groupProducts) {
+      const quantity = counts.get(product.id) || 0;
+      const subtotal = quantity * Number(product.price || 0);
 
-        product.price;
-
-
-      total +=
-        subtotal;
-
-
-      const row =
-        document.createElement(
-          "div"
-        );
-
-
-      row.className =
-        "bom-row";
-
-
+      const row = document.createElement("div");
+      row.className = "bom-row";
       row.innerHTML = `
-
+        <span class="bom-qty">${quantity}×</span>
         <span class="bom-name">
-          ${quantity}×
-          ${escapeHTML(product.name)}
+          <span class="bom-product-name">${escapeHTML(product.name)}</span>
+          <span class="bom-unit-price">${formatPrice(product.price)} / Stück</span>
         </span>
-
-
-        <span class="bom-price">
-          ${formatPrice(subtotal)}
-        </span>
-
+        <span class="bom-price">${formatPrice(subtotal)}</span>
       `;
 
-
-      container.appendChild(
-        row
-      );
-
+      rows.appendChild(row);
     }
 
+    card.appendChild(header);
+    card.appendChild(rows);
+    container.appendChild(card);
   }
 
-
-  totalElement.textContent =
-    formatPrice(
-      total
-    );
+  totalElement.textContent = formatPrice(total);
 
 }
-
 
 
 function createBOMText() {

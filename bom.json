@@ -1,164 +1,195 @@
 {
   "gridSizeMM": 60,
-
   "groups": [
+    {
+      "id": "pitlane",
+      "name": "Boxengasse"
+    },
     {
       "id": "garage",
       "name": "Garage"
     },
     {
-      "id": "pitlane",
-      "name": "Boxengasse"
+      "id": "uni",
+      "name": "Universell"
     },
     {
       "id": "accessories",
       "name": "Sonstiges Zubehör"
     }
   ],
-
   "products": [
     {
-      "id": "starter-set",
-      "name": "Starter-Set (2x3)",
-      "price": 26.90,
-      "model": "starter-set_garage.glb",
+      "id": "garage - starter-set",
+      "name": "Garage StarterSet",
+      "price": 24.9,
+      "model": "garage_starterset.glb",
       "image": "starter-set.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 2,
       "cellsZ": 3,
-
       "enabled": true
     },
-
     {
-      "id": "eckprofil-links",
-      "name": "ModuDisplays - Eckprofil Garage links (2x3)",
-      "price": 17.90,
-      "model": "eckprofil_links.glb",
+      "id": "garage - eckprofil links",
+      "name": "Garage Eckprofil links",
+      "price": 17.9,
+      "model": "garage_eckprofil_links.glb",
       "image": "eckprofil-links.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 2,
       "cellsZ": 3,
-
       "occupiedCells": [
-        [0, 0],
-        [1, 0],
-        [0, 1],
-        [0, 2]
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          0,
+          1
+        ],
+        [
+          0,
+          2
+        ]
       ],
-
       "collisionRotation": 0,
-
       "enabled": true
     },
-
     {
       "id": "eckprofil-rechts",
-      "name": "ModuDisplays - Eckprofil Garage rechts (2x3)",
-      "price": 17.90,
-      "model": "eckprofil_rechts.glb",
+      "name": "Garage Eckprofil rechts",
+      "price": 17.9,
+      "model": "garage_eckprofil_rechts.glb",
       "image": "eckprofil-rechts.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 2,
       "cellsZ": 3,
-
       "occupiedCells": [
-        [0, 0],
-        [1, 0],
-        [1, 1],
-        [1, 2]
+        [
+          0,
+          0
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          1,
+          1
+        ],
+        [
+          1,
+          2
+        ]
       ],
-
       "collisionRotation": 0,
-
       "enabled": true
     },
-
     {
-      "id": "ladepad",
-      "name": "ModuDisplays - Ladepad / Parkfläche (1x2)",
-      "price": 9.90,
+      "id": "ladepad_fliese",
+      "name": "Ladestation Fliese",
+      "price": 8.9,
       "model": "ladepad_fliese.glb",
       "image": "ladepad.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 1,
       "cellsZ": 2,
-
       "enabled": true
     },
-
     {
       "id": "ladepad_asphalt",
-      "name": "ModuDisplays - Ladepad / Asphalt (1x2)",
-      "price": 9.90,
+      "name": "Ladestation Asphalt",
+      "price": 8.9,
       "model": "ladepad_asphalt.glb",
       "image": "ladepad_asphalt.webp",
-
       "group": "pitlane",
       "placement": "grid",
-
       "cellsX": 1,
       "cellsZ": 2,
-
       "enabled": true
     },
-
+    {
+      "id": "box",
+      "name": "Box",
+      "price": 8.9,
+      "model": "boxengasse_box.glb",
+      "image": "box.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "enabled": true
+    },
+    {
+      "id": "top",
+      "name": "Aufbau",
+      "price": 5.9,
+      "model": "boxengasse_aufbau.glb",
+      "image": "boxengasse_aufbau.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "heightMM": 89,
+      "enabled": true,
+      "collisionLayer": "level2"
+    },
+    {
+      "id": "gelaender",
+      "name": "Geländer",
+      "price": 2.9,
+      "model": "boxengasse_gelaender.glb",
+      "image": "boxengasse_gelaender.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "heightMM": 85,
+      "enabled": true,
+      "collisionLayer": "level2"
+    },
     {
       "id": "rueckwand",
-      "name": "ModuDisplays - Rückwand Garage (1x1)",
-      "price": 5.90,
-      "model": "rueckwand_garage.glb",
+      "name": "Garage Rückwand",
+      "price": 4.9,
+      "model": "garage_rueckwand.glb",
       "image": "rueckwand.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 1,
       "cellsZ": 1,
-
       "enabled": true
     },
-
     {
       "id": "fliese",
-      "name": "ModuDisplays - Fließe (1x1)",
-      "price": 2.50,
-      "model": "fliese.glb",
+      "name": "Uni Fliese",
+      "price": 1.9,
+      "model": "uni_fliese.glb",
       "image": "fliese.webp",
-
       "group": "garage",
       "placement": "grid",
-
       "cellsX": 1,
       "cellsZ": 1,
-
       "enabled": true
     },
-
     {
       "id": "hebebuehne",
       "name": "Hebebühne",
-      "price": 4.90,
+      "price": 4.9,
       "model": "hebebuehne.glb",
       "image": "hebebuehne.webp",
-
       "group": "accessories",
       "placement": "free",
-
       "heightMM": 11,
-
       "enabled": true
     }
   ]

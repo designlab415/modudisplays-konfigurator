@@ -340,10 +340,17 @@
 
 
     .sidebar-panel {
+      display: none;
+
       padding: 20px;
 
       border-bottom:
         1px solid #eeeeee;
+    }
+
+
+    .sidebar-panel.active {
+      display: block;
     }
 
 
@@ -976,7 +983,55 @@
 
 
     .mobile-tabs {
-      display: none;
+      display: grid;
+
+      flex: 0 0 auto;
+
+      grid-template-columns:
+        1fr
+        1fr
+        1fr;
+
+      gap: 6px;
+
+      padding: 10px 12px;
+
+      background: #f8f9fa;
+
+      border-bottom:
+        1px solid #e9ecef;
+    }
+
+
+    .mobile-tab {
+      min-height: 42px;
+
+      padding: 8px 6px;
+
+      background: transparent;
+
+      border: 0;
+
+      border-radius: 7px;
+
+      color: #6c757d;
+
+      cursor: pointer;
+
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+
+    .mobile-tab:hover {
+      background: #eef1f4;
+    }
+
+
+    .mobile-tab.active {
+      background: #111111;
+
+      color: #ffffff;
     }
 
 
@@ -1573,12 +1628,6 @@
     </p>
 
     <p>
-      Zubehör aus der Kategorie
-      <strong>Sonstiges Zubehör</strong>
-      kann frei auf Ihrer Diorama-Fläche positioniert werden.
-    </p>
-
-    <p>
       Vielen Dank für Ihr Verständnis.
       Wir wünschen Ihnen viel Freude beim Planen und Bauen Ihrer
       eigenen ModuDisplays-Welt!
@@ -1873,15 +1922,6 @@
           onclick="copyBOM()"
         >
           Stückliste kopieren
-        </button>
-
-
-        <button
-          class="btn-export"
-          type="button"
-          onclick="showBetaModal()"
-        >
-          Beta-Hinweis
         </button>
 
 
@@ -3113,39 +3153,15 @@ function createProductCard(
     "";
 
 
-  const productHeightMM = Number(product.heightMM || 0);
-
-
   const meta =
 
     isFreeProduct(
       product
     )
 
-      ? `Frei platzierbar · Höhe ${productHeightMM} mm`
+      ? "Frei platzierbar"
 
-      : productHeightMM > 0
-
-        ? `${product.cellsX} × ${product.cellsZ} Rasterfelder · Ebene ${productHeightMM} mm`
-
-        : `${product.cellsX} × ${product.cellsZ} Rasterfelder · Bodenebene`;
-
-
-  const freeBadge =
-
-    isFreeProduct(
-      product
-    )
-
-      ? `
-
-        <span class="free-placement-badge">
-          Frei platzierbar
-        </span>
-
-      `
-
-      : "";
+      : `${product.cellsX} × ${product.cellsZ} Rasterfelder`;
 
 
   card.innerHTML = `
@@ -3172,9 +3188,6 @@ function createProductCard(
       <span class="item-meta">
         ${escapeHTML(meta)}
       </span>
-
-
-      ${freeBadge}
 
 
       <span class="item-price">

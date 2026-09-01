@@ -1057,9 +1057,9 @@
 
 
     .mobile-tab {
-      min-height: 54px;
+      min-height: 42px;
 
-      padding: 12px 10px;
+      padding: 8px 6px;
 
       background: transparent;
 
@@ -1071,7 +1071,7 @@
 
       cursor: pointer;
 
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 700;
     }
 
@@ -1440,7 +1440,7 @@
         min-height: 44px;
 
         padding:
-          12px 14px;
+          7px 5px;
 
         background: transparent;
 
@@ -2677,6 +2677,31 @@ function getProductHeight(
 
 
 
+function getPlacementHeight(product) {
+
+  if (!product) {
+    return 0;
+  }
+
+  /*
+    Das Hoehenniveau wird ausschliesslich aus der Produktdefinition
+    abgeleitet. Optional kann kuenftig placementHeightMM verwendet
+    werden; fuer bestehende BOM-Dateien bleibt heightMM kompatibel.
+  */
+  const heightMM =
+    Number(
+      product.placementHeightMM ??
+      product.heightMM ??
+      0
+    );
+
+  return Number.isFinite(heightMM)
+    ? heightMM / 1000
+    : 0;
+
+}
+
+
 function getCollisionLayer(product) {
 
   if (!product) {
@@ -2690,7 +2715,7 @@ function getCollisionLayer(product) {
   */
   return String(
     product.collisionLayer ||
-    (getProductHeight(product) > 0 ? `height-${product.heightMM}` : "ground")
+    (getPlacementHeight(product) > 0 ? `height-${product.placementHeightMM ?? product.heightMM}` : "ground")
   );
 
 }
@@ -4440,6 +4465,9 @@ function normalizeModelOrigin(
     model.position.x =
       -box.min.x;
 
+    model.position.y =
+      -box.min.y;
+
     model.position.z =
       -box.min.z;
 
@@ -4784,7 +4812,7 @@ async function addPart(
 
         start.x,
 
-        getProductHeight(
+        getPlacementHeight(
           product
         )
         +
@@ -4815,7 +4843,7 @@ async function addPart(
         {
 
           y:
-            getProductHeight(
+            getPlacementHeight(
               product
             ),
 
@@ -4848,7 +4876,7 @@ async function addPart(
           free.x
         ),
 
-        getProductHeight(product) + 0.025,
+        getPlacementHeight(product) + 0.025,
 
         gridToWorld(
           free.z
@@ -4888,7 +4916,7 @@ async function addPart(
         {
 
           y:
-            getProductHeight(product),
+            getPlacementHeight(product),
 
           duration:
             0.28,
@@ -4993,7 +5021,7 @@ async function copyActivePart() {
         original.position.x +
         0.025,
 
-        getProductHeight(
+        getPlacementHeight(
           product
         ),
 
@@ -5150,7 +5178,7 @@ async function copyActivePart() {
         target.x
       ),
 
-      getProductHeight(product) + 0.025,
+      getPlacementHeight(product) + 0.025,
 
       gridToWorld(
         target.z
@@ -5190,7 +5218,7 @@ async function copyActivePart() {
       {
 
         y:
-          getProductHeight(product),
+          getPlacementHeight(product),
 
         duration:
           0.24,
@@ -6008,7 +6036,7 @@ function showPlacementMarker(
       CELL_SIZE /
       2,
 
-      getProductHeight(product) + 0.001,
+      getPlacementHeight(product) + 0.001,
 
       gridToWorld(
         gridZ +
@@ -6099,7 +6127,7 @@ canvas.addEventListener(
 
     dragPlane.set(
       new THREE.Vector3(0, 1, 0),
-      -getProductHeight(targetProduct)
+      -getPlacementHeight(targetProduct)
     );
 
 
@@ -6295,7 +6323,7 @@ canvas.addEventListener(
 
         rawX,
 
-        getProductHeight(
+        getPlacementHeight(
           product
         ),
 
@@ -6348,7 +6376,7 @@ canvas.addEventListener(
         gridX
       ),
 
-      getProductHeight(product) + 0.008,
+      getPlacementHeight(product) + 0.008,
 
       gridToWorld(
         gridZ
@@ -6518,7 +6546,7 @@ function finishDrag(
           ),
 
         y:
-          getProductHeight(product),
+          getPlacementHeight(product),
 
         z:
           gridToWorld(
@@ -6831,7 +6859,9 @@ function buildLocalConfigurationData() {
 
   return {
 
-    version: 1,
+    version: 2,
+
+    heightSource: "bom",
 
     savedAt:
       new Date().toISOString(),
@@ -7092,7 +7122,7 @@ async function restoreLocalConfiguration() {
 
           object.position.set(
             Number(saved.x || 0),
-            getProductHeight(product),
+            getPlacementHeight(product),
             Number(saved.z || 0)
           );
 
@@ -7124,7 +7154,7 @@ async function restoreLocalConfiguration() {
 
           object.position.set(
             gridToWorld(gridX),
-            getProductHeight(product),
+            getPlacementHeight(product),
             gridToWorld(gridZ)
           );
 
@@ -7141,6 +7171,18 @@ async function restoreLocalConfiguration() {
         scene.add(
           object
         );
+
+
+        /*
+          Wichtig fuer gespeicherte Konfigurationen:
+          Y niemals aus localStorage uebernehmen. Die aktuelle BOM ist
+          die einzige Quelle fuer das Hoehenniveau. Dadurch koennen alte
+          oder fehlerhafte gespeicherte Y-Werte kein Bauteil anheben.
+        */
+        object.position.y =
+          getPlacementHeight(product);
+
+        object.updateMatrixWorld(true);
 
 
         placedObjects.push(

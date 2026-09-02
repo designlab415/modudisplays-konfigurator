@@ -1974,7 +1974,7 @@
     >
 
       <div class="section-title">
-        Export &amp; Anfrage
+        Export &amp; Bestellung
       </div>
 
 
@@ -2012,7 +2012,7 @@
           type="button"
           onclick="prepareEmail()"
         >
-          Anfrage per E-Mail
+          Bestellung per E-Mail
         </button>
 
       </div>
@@ -2070,6 +2070,26 @@
 
 let CELL_SIZE =
   0.06;
+
+
+/* =========================================================
+   RENNSTRECKEN-BODEN
+   Bilddatei: ./images/raceway-floor.webp
+   Empfohlenes Seitenverhaeltnis: 3:2, z. B. 3000 x 2000 px
+   Die Groesse entspricht einer 3,00 x 2,00 m grossen Matte.
+   ========================================================= */
+
+const FLOOR_TEXTURE_PATH =
+  "./images/raceway-floor.webp";
+
+const FLOOR_WIDTH =
+  3.0;
+
+const FLOOR_DEPTH =
+  2.0;
+
+const FLOOR_Y =
+  -0.0015;
 
 
 let products =
@@ -2343,6 +2363,112 @@ sun.castShadow =
 
 scene.add(
   sun
+);
+
+
+
+/* =========================================================
+   RENNSTRECKEN-BODEN
+   Die Textur liegt unter dem Raster. Dadurch bleibt das
+   60-mm-Raster voll funktionsfaehig und sichtbar.
+   ========================================================= */
+
+const floorGeometry =
+  new THREE.PlaneGeometry(
+    FLOOR_WIDTH,
+    FLOOR_DEPTH
+  );
+
+
+floorGeometry.rotateX(
+  -Math.PI / 2
+);
+
+
+const floorMaterial =
+  new THREE.MeshStandardMaterial({
+    color: 0xd9dde1,
+    roughness: 1.0,
+    metalness: 0.0,
+    side: THREE.DoubleSide
+  });
+
+
+const racewayFloor =
+  new THREE.Mesh(
+    floorGeometry,
+    floorMaterial
+  );
+
+
+racewayFloor.position.set(
+  0,
+  FLOOR_Y,
+  0
+);
+
+
+racewayFloor.receiveShadow =
+  true;
+
+
+scene.add(
+  racewayFloor
+);
+
+
+const floorTextureLoader =
+  new THREE.TextureLoader();
+
+
+floorTextureLoader.load(
+  FLOOR_TEXTURE_PATH,
+
+  texture => {
+
+    texture.encoding =
+      THREE.sRGBEncoding;
+
+    texture.anisotropy =
+      Math.min(
+        8,
+        renderer.capabilities.getMaxAnisotropy()
+      );
+
+    texture.wrapS =
+      THREE.ClampToEdgeWrapping;
+
+    texture.wrapT =
+      THREE.ClampToEdgeWrapping;
+
+    floorMaterial.map =
+      texture;
+
+    floorMaterial.color.set(
+      0xffffff
+    );
+
+    floorMaterial.needsUpdate =
+      true;
+
+  },
+
+  undefined,
+
+  error => {
+
+    console.warn(
+      `Bodenbild konnte nicht geladen werden: ${FLOOR_TEXTURE_PATH}`,
+      error
+    );
+
+    /*
+      Falls das Bild noch nicht hochgeladen wurde, bleibt der
+      neutrale graue Ersatzboden sichtbar. Der Konfigurator
+      funktioniert trotzdem normal weiter.
+    */
+
+  }
 );
 
 
@@ -8467,6 +8593,42 @@ async function copyBOM() {
 
 
 
+function downloadOrderScreenshot() {
+
+  const image =
+    getConfiguratorImage(
+      "image/png"
+    );
+
+
+  const link =
+    document.createElement(
+      "a"
+    );
+
+
+  link.download =
+    "ModuDisplays-Konfiguration.png";
+
+
+  link.href =
+    image;
+
+
+  document.body.appendChild(
+    link
+  );
+
+
+  link.click();
+
+
+  link.remove();
+
+}
+
+
+
 function prepareEmail() {
 
   if (
@@ -8488,23 +8650,79 @@ function prepareEmail() {
   }
 
 
+  let screenshotSaved =
+    false;
+
+
+  try {
+
+    downloadOrderScreenshot();
+
+
+    screenshotSaved =
+      true;
+
+  }
+
+  catch (error) {
+
+    console.warn(
+      "Screenshot konnte nicht gespeichert werden:",
+      error
+    );
+
+  }
+
+
   const subject =
-    "Anfrage ModuDisplays Konfiguration";
+    "Bestellung ModuDisplays Konfiguration";
 
 
   const body =
 
     "Hallo DesignLab,\n\n" +
 
-    "ich interessiere mich für folgende ModuDisplays-Konfiguration:\n\n" +
+    "ich möchte folgende Artikel zu den im Konfigurator angegebenen Preisen bestellen:\n\n" +
 
     createBOMText() +
 
     "\n\n" +
 
-    "Bitte erstellen Sie mir hierfür ein Angebot.\n\n" +
+    "Bitte senden Sie mir eine Bestellbestätigung mit den weiteren Informationen zur Abwicklung.\n\n" +
+
+    (
+      screenshotSaved
+        ? "Optional: Wenn Sie möchten, können Sie den gespeicherten Screenshot \"ModuDisplays-Konfiguration.png\" dieser E-Mail als Anhang hinzufügen.\n\n"
+        : "Optional: Sie können Ihrer Bestellung zusätzlich einen Screenshot Ihrer Konfiguration als Anhang hinzufügen.\n\n"
+    ) +
 
     "Viele Grüße";
+
+
+  if (
+    screenshotSaved
+  ) {
+
+    showStatus(
+      "Screenshot gespeichert – optional als E-Mail-Anhang verwendbar.",
+      false,
+      3200
+    );
+
+  }
+
+  else {
+
+    showStatus(
+      "Bestellmail wird geöffnet. Ein Screenshot kann optional manuell ergänzt werden.",
+      true,
+      3200
+    );
+
+  }
+
+
+  closeMobileMenu();
 
 
   window.location.href =

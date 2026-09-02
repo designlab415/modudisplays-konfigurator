@@ -283,6 +283,16 @@
       "placement": "free",
       "heightMM": 11,
       "enabled": true
+    },    {
+      "id": "led",
+      "name": "LED Licht- Touch Schalter - 5V USB",
+      "price": 6.9,
+      "model": "led.glb",
+      "image": "led.webp",
+      "group": "accessories",
+      "placement": "free",
+      "heightMM": 95,
+      "enabled": true
     },
     {
       "id": "oelfass",

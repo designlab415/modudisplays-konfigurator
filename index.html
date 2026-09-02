@@ -859,12 +859,42 @@
       text-align: center;
     }
 
+    .price-summary {
+      margin-top: 4px;
+      padding-top: 10px;
+      border-top: 1px solid #e9ecef;
+    }
+
+    .price-summary-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 4px 0;
+      color: #495057;
+      font-size: 12px;
+    }
+
+    .price-summary-row.shipping-free {
+      color: #218838;
+      font-weight: 700;
+    }
+
+    .shipping-hint {
+      margin: 4px 0 8px;
+      color: #868e96;
+      font-size: 10px;
+      line-height: 1.4;
+    }
+
     .total-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-top: 6px;
       margin-bottom: 14px;
-      padding-top: 4px;
+      padding-top: 9px;
+      border-top: 1px solid #dee2e6;
       font-size: 18px;
       font-weight: 750;
     }
@@ -1906,6 +1936,22 @@
       ></div>
 
 
+      <div class="price-summary">
+        <div class="price-summary-row">
+          <span>Warenwert</span>
+          <span id="goods-total">0,00 €</span>
+        </div>
+
+        <div id="shipping-row" class="price-summary-row">
+          <span>Versandkosten</span>
+          <span id="shipping-price">0,00 €</span>
+        </div>
+
+        <div id="shipping-hint" class="shipping-hint">
+          Versandkostenfrei ab 59,00 € Warenwert.
+        </div>
+      </div>
+
       <div class="total-row">
 
         <span>
@@ -2084,6 +2130,14 @@ let statusTimeout =
 
 const LOCAL_STORAGE_KEY =
   "modudisplays-konfiguration-v1";
+
+
+const SHIPPING_COST =
+  5.50;
+
+
+const FREE_SHIPPING_THRESHOLD =
+  59.00;
 
 
 let localSaveTimeout =
@@ -7368,6 +7422,18 @@ function updateBOM() {
   const overview =
     document.getElementById("bom-overview");
 
+  const goodsElement =
+    document.getElementById("goods-total");
+
+  const shippingElement =
+    document.getElementById("shipping-price");
+
+  const shippingRow =
+    document.getElementById("shipping-row");
+
+  const shippingHint =
+    document.getElementById("shipping-hint");
+
   const totalElement =
     document.getElementById("total-price");
 
@@ -7379,12 +7445,20 @@ function updateBOM() {
   const totalPieces = placedObjects.length;
   const distinctProducts = [...counts.values()].filter(qty => qty > 0).length;
 
-  let total = 0;
+  let goodsTotal = 0;
 
   for (const product of products) {
     const qty = counts.get(product.id) || 0;
-    total += qty * Number(product.price || 0);
+    goodsTotal += qty * Number(product.price || 0);
   }
+
+  const shippingCost =
+    totalPieces > 0 && goodsTotal < FREE_SHIPPING_THRESHOLD
+      ? SHIPPING_COST
+      : 0;
+
+  const grandTotal =
+    goodsTotal + shippingCost;
 
   overview.innerHTML = `
     <div class="bom-stat">
@@ -7397,6 +7471,9 @@ function updateBOM() {
     </div>
   `;
 
+  goodsElement.textContent = formatPrice(goodsTotal);
+  totalElement.textContent = formatPrice(grandTotal);
+
   if (totalPieces === 0) {
     container.innerHTML = `
       <div class="bom-empty">
@@ -7404,8 +7481,28 @@ function updateBOM() {
       </div>
     `;
 
-    totalElement.textContent = formatPrice(0);
+    shippingElement.textContent = formatPrice(0);
+    shippingRow.classList.remove("shipping-free");
+    shippingHint.textContent =
+      `Versandkosten ${formatPrice(SHIPPING_COST)} · kostenfrei ab ${formatPrice(FREE_SHIPPING_THRESHOLD)} Warenwert.`;
     return;
+  }
+
+  if (shippingCost === 0) {
+    shippingElement.textContent = "Kostenfrei";
+    shippingRow.classList.add("shipping-free");
+    shippingHint.textContent =
+      `Versandkostenfrei ab ${formatPrice(FREE_SHIPPING_THRESHOLD)} Warenwert erreicht.`;
+  }
+  else {
+    shippingElement.textContent = formatPrice(shippingCost);
+    shippingRow.classList.remove("shipping-free");
+
+    const remaining =
+      Math.max(0, FREE_SHIPPING_THRESHOLD - goodsTotal);
+
+    shippingHint.textContent =
+      `Noch ${formatPrice(remaining)} bis zum kostenfreien Versand.`;
   }
 
   for (const group of groups) {
@@ -7460,8 +7557,6 @@ function updateBOM() {
     container.appendChild(card);
   }
 
-  totalElement.textContent = formatPrice(total);
-
 }
 
 
@@ -7470,123 +7565,69 @@ function createBOMText() {
   const counts =
     getBOMCounts();
 
-
-  let total =
+  let goodsTotal =
     0;
 
-
   let text =
-
     "ModuDisplays Konfiguration\n" +
-
     "==========================\n\n";
 
-
-  for (
-    const group
-    of groups
-  ) {
+  for (const group of groups) {
 
     const lines =
       [];
 
+    for (const product of products) {
 
-    for (
-      const product
-      of products
-    ) {
-
-      if (
-        product.group !==
-        group.id
-      ) {
-
+      if (product.group !== group.id) {
         continue;
-
       }
-
 
       const quantity =
+        counts.get(product.id) || 0;
 
-        counts.get(
-          product.id
-        )
-
-        ||
-
-        0;
-
-
-      if (
-        quantity ===
-        0
-      ) {
-
+      if (quantity === 0) {
         continue;
-
       }
 
-
       const subtotal =
+        quantity * Number(product.price || 0);
 
-        quantity *
-
-        product.price;
-
-
-      total +=
+      goodsTotal +=
         subtotal;
 
-
       lines.push(
-
         `${quantity}x ${product.name} - ${formatPrice(subtotal)}`
-
       );
 
     }
 
-
-    if (
-      lines.length >
-      0
-    ) {
-
-      text +=
-        `${group.name}\n`;
-
-
-      text +=
-        "--------------------------\n";
-
-
-      text +=
-        lines.join(
-          "\n"
-        );
-
-
-      text +=
-        "\n\n";
-
+    if (lines.length > 0) {
+      text += `${group.name}\n`;
+      text += "--------------------------\n";
+      text += lines.join("\n");
+      text += "\n\n";
     }
 
   }
 
+  const shippingCost =
+    goodsTotal > 0 && goodsTotal < FREE_SHIPPING_THRESHOLD
+      ? SHIPPING_COST
+      : 0;
+
+  const grandTotal =
+    goodsTotal + shippingCost;
 
   text +=
-
-    "==========================\n"
-
-    +
-
-    `Gesamtsumme: ${formatPrice(total)}`;
-
+    "==========================\n" +
+    `Warenwert: ${formatPrice(goodsTotal)}\n` +
+    `Versandkosten: ${shippingCost === 0 ? "Kostenfrei" : formatPrice(shippingCost)}\n` +
+    `Gesamtsumme: ${formatPrice(grandTotal)}`;
 
   return text;
 
 }
-
 
 
 function getConfiguratorImage(
@@ -7947,7 +7988,7 @@ function exportPDF() {
     getBOMCounts();
 
 
-  let total =
+  let goodsTotal =
     0;
 
 
@@ -8061,7 +8102,7 @@ function exportPDF() {
         product.price;
 
 
-      total +=
+      goodsTotal +=
         subtotal;
 
 
@@ -8187,39 +8228,58 @@ function exportPDF() {
   );
 
 
-  pdf.text(
+  const shippingCost =
+    goodsTotal >= FREE_SHIPPING_THRESHOLD
+      ? 0
+      : SHIPPING_COST;
 
-    "Gesamtsumme",
+  const grandTotal =
+    goodsTotal + shippingCost;
 
-    15,
 
-    y
-
+  pdf.setFont(
+    "helvetica",
+    "normal"
   );
 
+  pdf.setFontSize(10);
 
+  pdf.text("Warenwert", 15, y);
+  pdf.text(formatPrice(goodsTotal), 195, y, { align: "right" });
+
+  y += 6;
+
+  pdf.text("Versandkosten", 15, y);
   pdf.text(
-
-    formatPrice(
-      total
-    ),
-
+    shippingCost === 0 ? "Kostenfrei" : formatPrice(shippingCost),
     195,
-
     y,
-
-    {
-
-      align:
-        "right"
-
-    }
-
+    { align: "right" }
   );
 
+  y += 8;
 
-  y +=
-    14;
+  pdf.setFont(
+    "helvetica",
+    "bold"
+  );
+
+  pdf.setFontSize(11);
+
+  pdf.text(
+    "Gesamtsumme",
+    15,
+    y
+  );
+
+  pdf.text(
+    formatPrice(grandTotal),
+    195,
+    y,
+    { align: "right" }
+  );
+
+  y += 14;
 
 
   pdf.setFont(

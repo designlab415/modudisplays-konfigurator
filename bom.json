@@ -106,6 +106,46 @@
       "enabled": true
     },
     {
+      "id": "box",
+      "name": "Boxengasse Box",
+      "price": 8.9,
+      "model": "boxengasse_box.glb",
+      "image": "box.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "enabled": true
+    },
+    {
+      "id": "top",
+      "name": "Boxengasse Box-Aufbau",
+      "price": 5.9,
+      "model": "boxengasse_aufbau.glb",
+      "image": "boxengasse_aufbau.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "heightMM": 89,
+      "enabled": true,
+      "collisionLayer": "level2"
+    },
+    {
+      "id": "gelaender",
+      "name": "Boxengasse Geländer",
+      "price": 3.2,
+      "model": "boxengasse_gelaender.glb",
+      "image": "gelaender.webp",
+      "group": "pitlane",
+      "placement": "grid",
+      "cellsX": 2,
+      "cellsZ": 2,
+      "heightMM": 85,
+      "enabled": true,
+      "collisionLayer": "level2"
+    },
+    {
       "id": "ladepad_asphalt",
       "name": "Ladestation Asphalt",
       "price": 8.9,
@@ -130,18 +170,6 @@
       "enabled": true
     },
     {
-      "id": "box",
-      "name": "Box",
-      "price": 8.9,
-      "model": "boxengasse_box.glb",
-      "image": "box.webp",
-      "group": "pitlane",
-      "placement": "grid",
-      "cellsX": 2,
-      "cellsZ": 2,
-      "enabled": true
-    },
-    {
       "id": "stasse",
       "name": "Straße",
       "price": 3.5,
@@ -152,34 +180,6 @@
       "cellsX": 2,
       "cellsZ": 2,
       "enabled": true
-    },
-    {
-      "id": "top",
-      "name": "Aufbau",
-      "price": 5.9,
-      "model": "boxengasse_aufbau.glb",
-      "image": "boxengasse_aufbau.webp",
-      "group": "pitlane",
-      "placement": "grid",
-      "cellsX": 2,
-      "cellsZ": 2,
-      "heightMM": 89,
-      "enabled": true,
-      "collisionLayer": "level2"
-    },
-    {
-      "id": "gelaender",
-      "name": "Geländer",
-      "price": 2.9,
-      "model": "boxengasse_gelaender.glb",
-      "image": "gelaender.webp",
-      "group": "pitlane",
-      "placement": "grid",
-      "cellsX": 2,
-      "cellsZ": 2,
-      "heightMM": 85,
-      "enabled": true,
-      "collisionLayer": "level2"
     },
     {
       "id": "rueckwand",
@@ -268,6 +268,17 @@
       "price": 3.9,
       "model": "werkbank.glb",
       "image": "werkbank.webp",
+      "group": "accessories",
+      "placement": "free",
+      "heightMM": 11,
+      "enabled": true
+    },
+    {
+      "id": "pylone",
+      "name": "Pylonen (5 Stück)",
+      "price": 2.5,
+      "model": "pylone.glb",
+      "image": "pylone.webp",
       "group": "accessories",
       "placement": "free",
       "heightMM": 11,
